@@ -1,0 +1,41 @@
+All .root files in
+/hdfs/store/user/shilpi/aNTGC/ggNtuplizerSkim_AOD/BHStudy/SinglePhoton/crab_SinglePhotonRun2017*17NOV2017v1AOD/*.root
+have been processed by:
+tmmain
+which comes from the command:
+g++ tmcut.cpp -o tmmain -pthread -std=c++1y -m64 -I/cvmfs/cms.cern.ch/slc7_amd64_gcc630/cms/cmssw/CMSSW_9_4_3/external/slc7_amd64_gcc630/bin/../../../../../../../slc7_amd64_gcc630/lcg/root/6.10.08/include -L/cvmfs/cms.cern.ch/slc7_amd64_gcc630/cms/cmssw/CMSSW_9_4_3/external/slc7_amd64_gcc630/bin/../../../../../../../slc7_amd64_gcc630/lcg/root/6.10.08/lib -lCore -lImt -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lTreePlayer -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -lMultiProc -pthread -lm -ldl -rdynamic
+and the resulting files have been stored in /hdfs/store/user/rpeterse/tmcut_data_*/*.root
+where you can find:
+tmcut_data_B/run_tmmain-B-anTGCtree_data.root
+tmcut_data_C/run_tmmain-C-anTGCtree_data.root
+tmcut_data_D/run_tmmain-D-anTGCtree_data.root
+tmcut_data_E/run_tmmain-E-anTGCtree_data.root
+tmcut_data_F1/run_tmmain-F1-anTGCtree_data.root
+tmcut_data_F2/run_tmmain-F2-anTGCtree_data.root
+tmcut_data_F30/run_tmmain-F30-anTGCtree_data.root
+tmcut_data_F31/run_tmmain-F31-anTGCtree_data.root
+tmcut_data_F40/run_tmmain-F40-anTGCtree_data.root
+tmcut_data_F41/run_tmmain-F41-anTGCtree_data.root
+Next, these files were each processed with promptmain, promptbarrelmain, beamhalomain, and beamhalobarrelmain,
+which were compiled from promptcut.cpp, promptbarrelcut.cpp, beamhalocut.cpp, and beamhalobarrelcut.cpp.
+As of Dec 13, 2019, promptbarrelcut.cpp and beamhalobarrelcut.cpp have not been updated in while and are obsolete.
+The results of this processing are on gitlab:
+https://gitlab.com/reesepetersen/atgc_reese
+
+The file train.py was originally derived from a BDT which Mohammed shared with me.
+To run train.py do:
+cmsrel CMSSW_9_4_3
+cd CMSSW_9_4_3/src
+cmsenv
+git clone https://gitlab.com/reesepetersen/atgc_reese.git
+cd atgc_reese
+./train.py root_file_list.txt
+
+For MC:
+/hdfs/store/user/rpeterse/MC
+MC prompt photons are based on 'ntuples' at
+/hdfs/store/user/shilpi/aNTGC/ggNtuplizerSkim_AOD/BHStudy/MC_mcMatch/ZNuNuGJets_MonoPhoton_PtG-130_TuneCP5_13TeV-madgraph/crab_ZNuNuGJetsMonoPhotonPtG130TuneCP513TeVmadgraph/191208_233731/0000/
+These root files were all processed by:
+1. tmcut.cpp
+2. promptMCcut.cpp
+The result is called anTGCtree_MC_prompt.root
