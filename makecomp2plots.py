@@ -134,6 +134,14 @@ phoE_d = {
     "position":11,
     "yscale":"linear",
     "nbins":100}
+phoEt_d = {
+    "name":"phoEt",
+    "low":0,
+    "high":2500,
+    "units":"phoEt",
+    "position":11,
+    "yscale":"log",
+    "nbins":100}
 var_od = OrderedDict()
 #var_od['phoR9'] = phoR9_d
 #var_od['phoSigmaIEtaIEtaFull5x5'] = phoSigmaIEtaIEtaFull5x5_d
@@ -147,6 +155,7 @@ var_od['phoHoverE'] = phoHoverE_d
 #var_od['phoSCEtaWidth'] = phoSCEtaWidth_d
 #var_od['phoSCPhiWidth'] = phoSCPhiWidth_d
 #var_od['phoE'] = phoE_d
+var_od['phoEt'] = phoEt_d
 
 # check input file for .root extension
 infilelist = sys.argv
@@ -388,7 +397,7 @@ def plot_2D(x_var,x_range,x_units,y_var,y_range,y_units,dirstring,treename):
   r.gStyle.SetTitleX(0.5)
   rf = r.TFile(get_filestring(dirstring))
   t = rf.Get(get_objectpath(dirstring,treename))
-  h = r.TH2F('h',x_var+" vs "+y_var,200,xlow,xhigh,200,ylow,yhigh)
+  h = r.TH2F('h',x_var+" vs "+y_var,180,xlow,xhigh,180,ylow,yhigh)
   h.GetXaxis().SetTitle(x_units)
   h.GetYaxis().SetTitle(y_units)
   sel = raw_input("Selection (continue for none): ")
@@ -396,28 +405,12 @@ def plot_2D(x_var,x_range,x_units,y_var,y_range,y_units,dirstring,treename):
   canv = r.TCanvas('canvas2D','2D '+x_var+' vs '+y_var)
   corfac = h.GetCorrelationFactor()
   print "Pearson Correlation Factor: "+str(corfac)
+  h.SetTitle(sel)
   h.Draw('colz')
   canv.Update()
   save = raw_input("Save? (y/n): ")
   if save == 'y':
     canv.SaveAs(x_var+'_vs_'+y_var+'_'+get_barename(get_filestring(dirstring))+'.png')
-
-def plot_he_r(dirstring,treename):
-  r.gStyle.SetOptStat(0)
-  r.gStyle.SetTitleAlign(33)
-  r.gStyle.SetTitleX(0.5)
-  rf = r.TFile(get_filestring(dirstring))
-  t = rf.Get(get_objectpath(dirstring,treename))
-  t.Draw("sqrt(hbherhX*hbherhX+hbherhY*hbherhY)","hbherhEta>1.48 && hbherhE>1.5")
-  raw_input('wait')
-
-def plot_HE_phoSC_prox(dirstring,treename):
-  r.gStyle.SetTitleAlign(33)
-  r.gStyle.SetTitleX(0.5)
-  rf = r.TFile(get_filestring(dirstring))
-  t = rf.Get(get_objectpath(dirstring,treename))
-  t.Draw("sqrt((hbherhX-phoSCX)^2+(hbherhY-phoSCY)^2)","hbherhE>1 && hbherhEta>1.3")
-  raw_input('wait')
 
 def compare_vars(dirstring,treename,infilelist):
   for varname in var_od:
@@ -425,9 +418,10 @@ def compare_vars(dirstring,treename,infilelist):
     compare_var_from_files(varname,dirstring,treename,infilelist,var['low'],var['high'],var['units'],var['nbins'])
 
 def process_x_v_y(dirstring,treename):
-  choice = select_from_ttree(dirstring,treename)
-  x_var = choice['name']
-  print "x variable: "+x_var
+#  choice = select_from_ttree(dirstring,treename)
+#  x_var = choice['name']
+#  print "x variable: "+x_var
+  x_var = raw_input("x variable: ")
   x_range = raw_input("Please give the x range (e.g. -3.14,3.14): ")
   x_units = raw_input("Please give the x units: ")
   y_var = raw_input("y variable: ")
@@ -476,10 +470,6 @@ def process_ttree(dirstring,treename):
     compare_vars(dirstring,treename,infilelist)
   elif action == '2':
     process_x_v_y(dirstring,treename)
-  #elif action == 'sqrt':
-  #  plot_he_r(dirstring,treename)
-  #elif action == 'phoSC':
-  #  plot_HE_phoSC_prox(dirstring,treename)
   elif action == 'corr':
     make_corr(dirstring,treename)
   return chosen

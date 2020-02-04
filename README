@@ -1,3 +1,12 @@
+Data source: dataset=/SinglePhoton/Run2017*-17Nov2017-v1/AOD
+/SinglePhoton/Run2017B-17Nov2017-v1/AOD
+/SinglePhoton/Run2017C-17Nov2017-v1/AOD
+/SinglePhoton/Run2017D-17Nov2017-v1/AOD
+/SinglePhoton/Run2017E-17Nov2017-v1/AOD
+/SinglePhoton/Run2017F-17Nov2017-v1/AOD
+
+Processed with: https://github.com/jainshilpi/aNTGCntuplizer.git, branch: METv2_AOD
+
 All .root files in
 /hdfs/store/user/shilpi/aNTGC/ggNtuplizerSkim_AOD/BHStudy/SinglePhoton/crab_SinglePhotonRun2017*17NOV2017v1AOD/*.root
 have been processed by:
