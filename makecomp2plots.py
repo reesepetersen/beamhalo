@@ -143,18 +143,18 @@ phoEt_d = {
     "yscale":"log",
     "nbins":100}
 var_od = OrderedDict()
-#var_od['phoR9'] = phoR9_d
-#var_od['phoSigmaIEtaIEtaFull5x5'] = phoSigmaIEtaIEtaFull5x5_d
-#var_od['phoSigmaIEtaIPhiFull5x5'] = phoSigmaIEtaIPhiFull5x5_d
-#var_od['phoSigmaIPhiIPhiFull5x5'] = phoSigmaIPhiIPhiFull5x5_d
-#var_od['phoSeedTime'] = phoSeedTime_d
+var_od['phoR9'] = phoR9_d
+var_od['phoSigmaIEtaIEtaFull5x5'] = phoSigmaIEtaIEtaFull5x5_d
+var_od['phoSigmaIEtaIPhiFull5x5'] = phoSigmaIEtaIPhiFull5x5_d
+var_od['phoSigmaIPhiIPhiFull5x5'] = phoSigmaIPhiIPhiFull5x5_d
+var_od['phoSeedTime'] = phoSeedTime_d
 var_od['phoPhi'] = phoPhi_d
 var_od['phoHoverE'] = phoHoverE_d
 #var_od['phoNumHERHzside'] = phoNumHERHzside_d
 #var_od['phoNumESRHzside'] = phoNumESRHzside_d
-#var_od['phoSCEtaWidth'] = phoSCEtaWidth_d
-#var_od['phoSCPhiWidth'] = phoSCPhiWidth_d
-#var_od['phoE'] = phoE_d
+var_od['phoSCEtaWidth'] = phoSCEtaWidth_d
+var_od['phoSCPhiWidth'] = phoSCPhiWidth_d
+var_od['phoE'] = phoE_d
 var_od['phoEt'] = phoEt_d
 
 # check input file for .root extension
@@ -383,7 +383,7 @@ def compare_var_from_files(name,dirstring,treename,infilelist,hrlow,hrhigh,hist_
   leg.AddEntry(h2,get_barename(file2),'l')
   leg.Draw('hist')
   comp_canvas.Update()
-  comp_canvas.SaveAs(name+'_'+get_barename(file1)+'_'+get_barename(file2)+'.png')
+  comp_canvas.SaveAs('../slides_beamhalo/'+name+'_'+get_barename(file1)+'_'+get_barename(file2)+'.png')
 
 def plot_2D(x_var,x_range,x_units,y_var,y_range,y_units,dirstring,treename):
   xr = x_range.split(',')
