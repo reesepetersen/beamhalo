@@ -28,7 +28,7 @@ for filename in open(listfile):
 
 signal = 'beamhalo'
 
-save_directory = os.getcwd() + '/' + signal + '/'
+save_directory = os.getcwd() + '/train_results/'
 
 # create directory in which to save model
 try:  
@@ -44,12 +44,12 @@ print('Signal list: ', signal_list)
 bg_list = [line.rstrip('\n') for line in open(listfile) if 'prompt' in line]
 print('Background list: ', bg_list)
 
-feature_names = ['phoR9','phoSigmaIEtaIEtaFull5x5','phoSigmaIEtaIPhiFull5x5','phoSigmaIPhiIPhiFull5x5','phoHoverE','phoSeedTime','phoNumHERHzside','phoNumESRHzside','phoSCEtaWidth','phoSCPhiWidth']
-feature_symbols = ['R9',r'$\sigma_{i\eta i\eta}$',r'$\sigma_{i\eta i\phi}$',r'$\sigma_{i\phi i\phi}$','H/E','Seed Time','num HERH zside','num ESRH zside',r'SC $\eta$ width',r'SC $\phi$ width']
+#feature_names = ['phoR9','phoSigmaIEtaIEtaFull5x5','phoSigmaIEtaIPhiFull5x5','phoSigmaIPhiIPhiFull5x5','phoHoverE','phoSeedTime','phoNumHERHzside','phoNumESRHzside','phoSCEtaWidth','phoSCPhiWidth']
+#feature_symbols = ['R9',r'$\sigma_{i\eta i\eta}$',r'$\sigma_{i\eta i\phi}$',r'$\sigma_{i\phi i\phi}$','H/E','Seed Time','num HERH zside','num ESRH zside',r'SC $\eta$ width',r'SC $\phi$ width']
 #feature_names = ['phoR9','phoSigmaIEtaIEtaFull5x5','phoSigmaIEtaIPhiFull5x5','phoSigmaIPhiIPhiFull5x5','phoHoverE','phoNumHERH','phoNumESRH','phoSCEtaWidth','phoSCPhiWidth']
 #feature_symbols = ['R9',r'$\sigma_{i\eta i\eta}$',r'$\sigma_{i\eta i\phi}$',r'$\sigma_{i\phi i\phi}$','H/E','num HERH','num ESRH',r'SC $\eta$ width',r'SC $\phi$ width']
-#feature_names = ['phoR9','phoSigmaIEtaIEtaFull5x5','phoSigmaIEtaIPhiFull5x5','phoSigmaIPhiIPhiFull5x5','phoHoverE','phoSCEtaWidth','phoSCPhiWidth']
-#feature_symbols = ['R9',r'$\sigma_{i\eta i\eta}$',r'$\sigma_{i\eta i\phi}$',r'$\sigma_{i\phi i\phi}$','H/E',r'SC $\eta$ width',r'SC $\phi$ width']
+feature_names = ['phoR9','phoSigmaIEtaIEtaFull5x5','phoSigmaIEtaIPhiFull5x5','phoSigmaIPhiIPhiFull5x5','phoHoverE','phoSCEtaWidth','phoSCPhiWidth']
+feature_symbols = ['R9',r'$\sigma_{i\eta i\eta}$',r'$\sigma_{i\eta i\phi}$',r'$\sigma_{i\phi i\phi}$','H/E',r'SC $\eta$ width',r'SC $\phi$ width']
 #feature_names = ['phoR9','phoSigmaIEtaIEtaFull5x5','phoSigmaIEtaIPhiFull5x5','phoSigmaIPhiIPhiFull5x5','phoNumHERH','phoSCEtaWidth','phoSCPhiWidth','phoSeedTime']
 #feature_symbols = ['R9',r'$\sigma_{i\eta i\eta}$',r'$\sigma_{i\eta i\phi}$',r'$\sigma_{i\phi i\phi}$','num HERH',r'SC $\eta$ width',r'SC $\phi$ width','Seed Time']
 feature_dict = {}
@@ -136,6 +136,8 @@ X_train, X_test, Y_train, Y_test = model_selection.train_test_split(_Feat, _Y, t
 #
 #print "X_test: "
 #print X_test
+#print "X_test[0]: "
+#print X_test[0]
 #
 #print "Y_test: "
 #print Y_test
@@ -249,16 +251,16 @@ plt.figure()
 fig, ax = plt.subplots()
 plt.title('Receiver Operator Characteristic')
 ax.plot(fpr_test,tpr_test,'r',label='AUC test = {0}'.format(roc_auc_test))
-rocfile = open(savedir+'/txtROC_'+savename+strnumfeat+'.txt','w')
+#rocfile = open(savedir+'/txtROC_'+savename+strnumfeat+'.txt','w')
 #for i in range(len(tpr_test)):
 #  if abs(fpr_test[i]-0.00019) < 0.0009 and fpr_test[i] > 0:
 #    print fpr_test[i]
 #    print tpr_test[i]
 rocpairs = np.stack((fpr_test,tpr_test),axis=-1)
-for pair in rocpairs:
-  if pair[0] <= 0.01:
-    print pair
-rocfile.write('?')
+#for pair in rocpairs:
+#  if pair[0] <= 0.01:
+#    print pair
+#rocfile.write('?')
 ax.plot(fpr_train,tpr_train,'b',label='AUC train = {0}'.format(roc_auc_train))
 ax.legend(loc='lower right')
 ax.plot([0,1],[0,1],'k--')

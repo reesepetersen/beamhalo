@@ -323,7 +323,10 @@ def get_color(filestring):
   elif 'prompt' in filestring and 'MC' in filestring:
     return r.kOrange+1
   elif 'beamhalo' in filestring and 'data' in filestring:
-    return r.kBlue
+    if 'not' in filestring:
+      return r.kViolet+3
+    else:
+      return r.kBlue
   elif 'beamhalo' in filestring and 'MC' in filestring:
     return r.kViolet
   elif 'tmne' in filestring and 'data' in filestring:
@@ -456,6 +459,87 @@ def make_corr(dirstring,treename):
   if save == 'y':
     canv.SaveAs('corr_matrix_'+get_barename(get_filestring(dirstring))+'.png')
 
+def make_reweight(dirstring,treename):
+  name = "phoEt"
+  var = var_od[name]
+  hrlow = var['low']
+  hrhigh = var['high']
+  hist_units = var['units']
+  nbins = var['nbins']
+  file1 = infilelist[1]
+  file2 = infilelist[2]
+  r.gStyle.SetOptStat(0)
+  r.gStyle.SetTitleAlign(33)
+  r.gStyle.SetTitleX(0.5)
+  rf1 = r.TFile(file1)
+  rf2 = r.TFile(file2,"UPDATE")
+  t1 = rf1.Get(get_objectpath(dirstring,treename))
+  t2 = rf2.Get(get_objectpath(dirstring,treename))
+  h1 = r.TH1D('h1',name,nbins,hrlow,hrhigh)
+  h2 = r.TH1D('h2',name,nbins,hrlow,hrhigh)
+  h1.SetLineColor(get_color(file1))
+  h2.SetLineColor(get_color(file2))
+  h1.GetXaxis().SetTitle(hist_units)
+  sel = ''
+  t1.Draw(name+'>>h1',sel,'goff')
+  t2.Draw(name+'>>h2',sel,'goff')
+  comp_canvas = r.TCanvas('comp_canvas','compare '+name)
+  hw = h1.Clone('hwpt')
+  hw.Divide(h2)
+  hw.Draw()
+  hw.Write()
+
+def compare_reweighted(name,dirstring,treename,infilelist,hrlow,hrhigh,hist_units,nbins):
+  file1 = infilelist[1]
+  file2 = infilelist[2]
+  r.gStyle.SetOptStat(0)
+  r.gStyle.SetTitleAlign(33)
+  r.gStyle.SetTitleX(0.5)
+  rf1 = r.TFile(file1)
+  rf2 = r.TFile(file2)
+  t1 = rf1.Get(get_objectpath(dirstring,treename))
+  t2 = rf2.Get(get_objectpath(dirstring,treename))
+  h1 = r.TH1D('h1',name,nbins,hrlow,hrhigh)
+  h2 = r.TH1D('h2',name,nbins,hrlow,hrhigh)
+  h1.SetLineColor(get_color(file1))
+  h2.SetLineColor(get_color(file2))
+  h1.GetXaxis().SetTitle(hist_units)
+  sel = ''
+  t1.Draw(name+'>>h1',sel,'goff')
+  t2.Draw(name+'>>h2','phopTweight','goff')
+  comp_canvas = r.TCanvas('comp_canvas','compare '+name)
+  maxall = max(h1.GetMaximum(),h2.GetMaximum())
+  sum1 = h1.Integral()
+  sum2 = h2.Integral()
+  maxsum = max(sum1,sum2)
+  h1.Scale(1/sum1)
+  h2.Scale(1/sum2)
+  var = var_od[name]
+  if var['yscale'] == "log":
+    comp_canvas.SetLogy()
+    h1.SetMinimum(1./(2*maxsum))
+    h2.SetMinimum(1./(2*maxsum))
+  max1 = h1.GetMaximum()
+  max2 = h2.GetMaximum()
+  maxlist = [max1,max2]
+  if max1 == max(maxlist):
+    h1.Draw('hist')
+    h2.Draw('hist same')
+  elif max2 == max(maxlist):
+    h2.Draw('hist')
+    h1.Draw('hist same')
+  leg = r.TLegend(0.5,0.9,0.9,1.0)
+  leg.AddEntry(h1,get_barename(file1),'l')
+  leg.AddEntry(h2,get_barename(file2),'l')
+  leg.Draw('hist')
+  comp_canvas.Update()
+  comp_canvas.SaveAs('../slides_beamhalo/'+name+'_'+get_barename(file1)+'_'+get_barename(file2)+'_pTweight.png')
+
+def compare_vars_weighted(dirstring,treename,infilelist):
+  for varname in var_od:
+    var = var_od[varname]
+    compare_reweighted(varname,dirstring,treename,infilelist,var['low'],var['high'],var['units'],var['nbins'])
+
 def process_ttree(dirstring,treename):
   print "TTree: "+treename
   chosen = {}
@@ -463,6 +547,8 @@ def process_ttree(dirstring,treename):
   print "1: histogram a single branch"
   print "2: histogram 2 branches"
   print "corr: make a correlation matrix"
+  print "mrpt: make reweight pt TH1D"
+  print "compr: compare a branch between 2 files, second is reweighted"
   action = raw_input("Please choose an action: ")
   if action == '1':
     plot_treebranch(dirstring,treename)
@@ -472,6 +558,10 @@ def process_ttree(dirstring,treename):
     process_x_v_y(dirstring,treename)
   elif action == 'corr':
     make_corr(dirstring,treename)
+  elif action == 'mrpt':
+    make_reweight(dirstring,treename)
+  elif action == 'compr':
+    compare_vars_weighted(dirstring,treename,infilelist)
   return chosen
 
 def process_TH1(dirstring,th1name):
