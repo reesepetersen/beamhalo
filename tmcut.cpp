@@ -50,18 +50,13 @@ string barename(string filepath) {
 
 int main(int argc, char** argv) {
     string infile = argv[1]; // Save input as string
-    TFile *f = new TFile(infile.c_str()); // Create TFile object for read file
-    auto *ggN = f->Get("ggNtuplizer"); // Get the TDirectoryFile object in the file called "ggNtuplizer"
-    auto *ggN2 = dynamic_cast<TDirectoryFile*> (ggN); // It came back as a TObject, so now lets recast it as a TDirectoryFile so we can get the TTree inside
-    auto *etree = ggN2->Get("EventTree"); // Get the TTree called EventTree, if there are multiple TTrees get the one with the lowest cycle number
-    string outpath = "";
-    string outname = barename(infile)+"_temcut.root";
-    string fileout = outpath+outname;
-    TFile *fnew = new TFile(fileout.c_str(),"RECREATE"); // Write over last output file of same name if it exists
-    auto *tree = dynamic_cast<TTree*> (etree);
+    TFile f (infile.c_str()); // Create TFile object for read file
+    TTree* tree = (TTree*)f.Get("ggNtuplizer/EventTree");
+    string fileout = barename(infile)+"_tm.root";
+    TFile fnew (fileout.c_str(),"RECREATE"); // Write over last output file of same name if it exists
     tree->SetBranchStatus("*",1);
     auto newtree = tree->CloneTree(0);
-    TTree* statstree = new TTree("statstree","Stats_Tree");
+    TTree statstree("statstree","Stats_Tree");
     ULong64_t HLTPho; // HLTPho
     Float_t pfMET; // pfMET
     tree->SetBranchAddress("HLTPho",&HLTPho);
@@ -81,18 +76,18 @@ int main(int argc, char** argv) {
       }
     }
     Float_t n_events_precut;
-    statstree->Branch("n_events_precut",&n_events_precut,"n_events_precut/F");
+    statstree.Branch("n_events_precut",&n_events_precut,"n_events_precut/F");
     n_events_precut = fn;
     Float_t n_events_t_postcut;
-    statstree->Branch("n_events_t_postcut",&n_events_t_postcut,"n_events_t_postcut/F");
+    statstree.Branch("n_events_t_postcut",&n_events_t_postcut,"n_events_t_postcut/F");
     n_events_t_postcut = HLTPho_pass_count;
     Float_t n_events_tm_postcut;
-    statstree->Branch("n_events_tm_postcut",&n_events_tm_postcut,"n_events_tm_postcut/F");
+    statstree.Branch("n_events_tm_postcut",&n_events_tm_postcut,"n_events_tm_postcut/F");
     n_events_tm_postcut = pfMET_pass_count;
-    statstree->Fill();
+    statstree.Fill();
     newtree->Write();
-    statstree->Write();
-    fnew->Close(); // Close files
-    f->Close();
+    statstree.Write();
+    fnew.Close(); // Close files
+    f.Close();
   return 0;
 }
