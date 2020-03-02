@@ -58,7 +58,7 @@ int get_close_phi_herh(float phoPhi,vector<float> *hbherhPhi,vector<float> *hbhe
   float delphi;
   float pi = 3.1415926535897932;
   for (int i = 0; i < hbherhPhi->size(); i++) {
-    if (hbherhEta->at(i) < 1.566) continue;//only look at HE hits, not HB hits
+    if (fabs(hbherhEta->at(i)) < 1.566) continue;//only look at HE hits, not HB hits
     delphi = fabs(hbherhPhi->at(i)-phoPhi);
     if (delphi > pi) delphi = 2*pi - delphi;
     if (delphi < 0.09) herh_count++; //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
@@ -71,7 +71,7 @@ int get_close_phi_herhzside(float phoPhi, float phoEta, vector<float> *hbherhPhi
   float delphi;
   float pi = 3.1415926535897932;
   for (int i = 0; i < hbherhPhi->size(); i++) {
-    if (hbherhEta->at(i) < 1.566) continue;//only look at HE hits, not HB hits
+    if (fabs(hbherhEta->at(i)) < 1.566) continue;//only look at HE hits, not HB hits
     delphi = fabs(hbherhPhi->at(i)-phoPhi);
     if (delphi > pi) delphi = 2*pi - delphi;
     bool samesign_eta = check_samesign_eta(phoEta,hbherhEta->at(i));
@@ -85,7 +85,7 @@ int get_close_phi_esrh(float phoPhi,vector<float> *esrhPhi,vector<float> *esrhEt
   float delphi;
   float pi = 3.1415926535897932;
   for (int i = 0; i < esrhPhi->size(); i++) {
-    if (esrhEta->at(i) < 1.566) continue;//only look at HE hits, not HB hits
+    if (fabs(esrhEta->at(i)) < 1.566) continue;//only look at HE hits, not HB hits
     delphi = fabs(esrhPhi->at(i)-phoPhi);
     if (delphi > pi) delphi = 2*pi - delphi;
     if (delphi < 0.09) esrh_count++; //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
@@ -98,7 +98,7 @@ int get_close_phi_esrhzside(float phoPhi, float phoEta, vector<float> *esrhPhi,v
   float delphi;
   float pi = 3.1415926535897932;
   for (int i = 0; i < esrhPhi->size(); i++) {
-    if (esrhEta->at(i) < 1.566) continue;//only look at HE hits, not HB hits
+    if (fabs(esrhEta->at(i)) < 1.566) continue;//only look at HE hits, not HB hits
     delphi = fabs(esrhPhi->at(i)-phoPhi);
     if (delphi > pi) delphi = 2*pi - delphi;
     bool samesign_eta = check_samesign_eta(phoEta,esrhEta->at(i));
@@ -107,6 +107,51 @@ int get_close_phi_esrhzside(float phoPhi, float phoEta, vector<float> *esrhPhi,v
   return esrh_count;
 }
 
+vector<float> phoAHETotal(vector<float> *esrhX, vector<float> *esrhY, vector<float> *esrhZ, vector<float> *esrhPhi, vector<float> *esrhE, vector<float> *esrhEta, vector<float> *hbherhX, vector<float> *hbherhY, vector<float> *hbherhZ, vector<float> *hbherhPhi, vector<float> *hbherhE, vector<float> *hbherhEta, vector<float> *phoEta, vector<float> *phoPhi) {
+  vector<float> TotalVec;
+  float pi = 3.14159265358979323846;
+  float ecal_z = 319.5;//cm
+  float alpha = pi/180;//1 degree in radians
+  float phoR;
+  float phophi;
+  float esrhR;
+  float esrhphi;
+  float hbherhR;
+  float hbherhphi;
+  float delphi;
+  float delr;
+  float esrhEtot;
+  float hbherhEtot;
+  float Etotal;
+  for (int i = 0; i < phoEta->size(); i++) {
+    phoR = ecal_z/sinh(phoEta->at(i));
+    phophi = phoPhi->at(i);
+    esrhEtot = 0.0;
+    hbherhEtot = 0.0;
+    Etotal = 0.0;
+    for (int j = 0; j < esrhE->size(); j++) {
+      if (fabs(esrhEta->at(j)) < 1.566) continue;//only look at HE hits, not HB hits
+      esrhR = sqrt(pow(esrhX->at(j),2)+pow(esrhY->at(j),2));
+      esrhphi = esrhPhi->at(j);
+      delphi = fabs(esrhphi-phophi);
+      delr = fabs(phoR-esrhR);
+      if (delphi > pi) delphi = 2*pi - delphi;
+      if (delphi < 0.09 && (delr <= esrhZ->at(j)*tan(alpha))) esrhEtot+=esrhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
+    }
+    for (int j = 0; j < hbherhE->size(); j++) {
+      if (fabs(hbherhEta->at(j)) < 1.566) continue;//only look at HE hits, not HB hits
+      hbherhR = sqrt(pow(hbherhX->at(j),2)+pow(hbherhY->at(j),2));
+      hbherhphi = hbherhPhi->at(j);
+      delphi = fabs(hbherhphi-phophi);
+      delr = fabs(phoR-hbherhR);
+      if (delphi > pi) delphi = 2*pi - delphi;
+      if (delphi < 0.09 && (delr <= hbherhZ->at(j)*tan(alpha))) hbherhEtot+=hbherhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
+    }
+    Etotal = esrhEtot + hbherhEtot;
+    TotalVec.push_back(Etotal);
+  }
+  return TotalVec;
+}
 
 int main(int argc, char** argv) {
   string infile = argv[1];
@@ -236,6 +281,7 @@ int main(int argc, char** argv) {
   vector<float> phoNumHERHzsidenew;
   vector<float> phoNumESRHnew;
   vector<float> phoNumESRHzsidenew;
+  vector<float> phoAHETotalnew;
   newtree.Branch("phoE",&phoEnew);
   newtree.Branch("phoEt",&phoEtnew);
   newtree.Branch("phoEta",&phoEtanew);
@@ -256,6 +302,7 @@ int main(int argc, char** argv) {
   newtree.Branch("phoNumHERHzside",&phoNumHERHzsidenew);
   newtree.Branch("phoNumESRH",&phoNumESRHnew);
   newtree.Branch("phoNumESRHzside",&phoNumESRHzsidenew);
+  newtree.Branch("phoAHETotal",&phoAHETotalnew);
   newtree.Branch("nesRH",&nesRHnew);
   newtree.Branch("esrhE",&esrhEnew);
   newtree.Branch("esrhiEta",&esrhiEtanew);
@@ -286,6 +333,7 @@ int main(int argc, char** argv) {
       phoNumHERHzsidenew.push_back(get_close_phi_herhzside(phoPhi->at(j),phoEta->at(j),hbherhPhi,hbherhEta));
       phoNumESRHnew.push_back(get_close_phi_esrh(phoPhi->at(j),esrhPhi,esrhEta));
       phoNumESRHzsidenew.push_back(get_close_phi_esrhzside(phoPhi->at(j),phoEta->at(j),esrhPhi,esrhEta));
+      phoAHETotalnew = phoAHETotal(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi);
     }
     phoEnew = *phoE;
     phoEtnew = *phoEt;
@@ -343,6 +391,7 @@ int main(int argc, char** argv) {
     phoNumHERHzsidenew.clear();
     phoNumESRHnew.clear();
     phoNumESRHzsidenew.clear();
+    phoAHETotalnew.clear();
     esrhEnew.clear();
     esrhiEtanew.clear();
     esrhiPhinew.clear();
