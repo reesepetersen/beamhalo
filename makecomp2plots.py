@@ -14,6 +14,7 @@ import ROOT as r
 import datetime
 import re
 from collections import OrderedDict
+import numpy as np
 
 # taking an argument from the command line
 #parser = argparse.ArgumentParser(description = 'This runs a monte carlo simulation for the energy flux of cosmic muons at sea level on Earth as a function of energy.')
@@ -305,17 +306,22 @@ def select_from_ttree(dirstring,treename):
   print 'selected: '+chosen['cpptype']+' '+chosen['name']
   return chosen
 
-def plot_treebranch(dirstring,treename):
+def plot_treebranch(dirstring,treename,sel):
   choice = select_from_ttree(dirstring,treename)
   rootfile = r.TFile(get_filestring(dirstring))
   tree = rootfile.Get(get_objectpath(dirstring,treename))
-  sel = raw_input("Selection (default none): ")
-  if choice['name'] == 'phoNumHERH':
-    hherh = r.TH1D('hherh','phoNumHERH',100,0,30)
-    tree.Draw(choice['name']+'>>hherh',sel)
-  else:
-    tree.Draw(choice['name'],sel)
+  c = r.TCanvas('phoPhiMIPTotalcanvas',sel)
+  if sel == "":
+    sel = raw_input("Selection (default none): ")
+  tree.Draw(choice['name'],sel)
   raw_input("Enter to quit ")
+
+def plot_treebranch_MIP(dirstring,treename,sel):
+  rootfile = r.TFile(get_filestring(dirstring))
+  tree = rootfile.Get(get_objectpath(dirstring,treename))
+  c = r.TCanvas('phoPhiMIPTotalcanvas',sel)
+  tree.Draw("phoPhi",sel)
+  c.SaveAs("MIPTotal/phoPhi_MIPTotal_gt_"+sel.split('>')[-1].split('&&')[0]+get_barename(get_filestring(dirstring))+".png")
 
 def get_color(filestring):
   if 'prompt' in filestring and 'data' in filestring:
@@ -540,6 +546,10 @@ def compare_vars_weighted(dirstring,treename,infilelist):
     var = var_od[varname]
     compare_reweighted(varname,dirstring,treename,infilelist,var['low'],var['high'],var['units'],var['nbins'])
 
+def plot_phi_MIPTotal(dirstring,treename):
+  for i in np.arange(0.9,10.9,1.0):
+    plot_treebranch_MIP(dirstring,treename,"phoMIPTotEnergy>"+str(round(i,2))+"&&abs(phoEta)<1.566")
+
 def process_ttree(dirstring,treename):
   print "TTree: "+treename
   chosen = {}
@@ -549,6 +559,7 @@ def process_ttree(dirstring,treename):
   print "corr: make a correlation matrix"
   print "mrpt: make reweight pt TH1D"
   print "compr: compare a branch between 2 files, second is reweighted"
+  print "phimip: plot phi with various MIPTotal cuts"
   action = raw_input("Please choose an action: ")
   if action == '1':
     plot_treebranch(dirstring,treename)
@@ -562,6 +573,8 @@ def process_ttree(dirstring,treename):
     make_reweight(dirstring,treename)
   elif action == 'compr':
     compare_vars_weighted(dirstring,treename,infilelist)
+  elif action == 'phimip':
+    plot_phi_MIPTotal(dirstring,treename)
   return chosen
 
 def process_TH1(dirstring,th1name):
