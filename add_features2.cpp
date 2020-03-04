@@ -118,18 +118,14 @@ vector<float> phoAHE1Total(vector<float> *esrhX, vector<float> *esrhY, vector<fl
   float esrhR;
   float esrhphi;
   float esrhz;
-  float hbherhR;
-  float hbherhphi;
   float delphi;
   float delr;
   float esrhEtot;
-  float hbherhEtot;
   for (int i = 0; i < phoEta->size(); i++) {
     phoeta = phoEta->at(i);
     phoR = ecal_z/sinh(phoeta);
     phophi = phoPhi->at(i);
     esrhEtot = 0.0;
-    hbherhEtot = 0.0;
     for (int j = 0; j < esrhE->size(); j++) {
       if (fabs(esrhEta->at(j)) < 1.566 || fabs(esrhEta->at(j)) > 2.5) continue;//skip non-endcap hits
       esrhR = sqrt(pow(esrhX->at(j),2)+pow(esrhY->at(j),2));
@@ -138,7 +134,7 @@ vector<float> phoAHE1Total(vector<float> *esrhX, vector<float> *esrhY, vector<fl
       delphi = fabs(esrhphi-phophi);
       delr = fabs(phoR-esrhR);
       if (delphi > pi) delphi = 2*pi - delphi;
-      if (delphi < 0.09 && (delr <= esrhZ->at(j)*tan(alpha))) {
+      if (delphi < 0.09 && (delr <= esrhz*tan(alpha))) {
         if (esrhz > 306.0 && phoeta > 1.566) esrhEtot+=esrhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
         else if (esrhz < -306.0 && phoeta < -1.566) esrhEtot+=esrhE->at(j);
       }
@@ -159,18 +155,14 @@ vector<float> phoAHE2Total(vector<float> *esrhX, vector<float> *esrhY, vector<fl
   float esrhR;
   float esrhphi;
   float esrhz;
-  float hbherhR;
-  float hbherhphi;
   float delphi;
   float delr;
   float esrhEtot;
-  float hbherhEtot;
   for (int i = 0; i < phoEta->size(); i++) {
     phoeta = phoEta->at(i);
     phoR = ecal_z/sinh(phoeta);
     phophi = phoPhi->at(i);
     esrhEtot = 0.0;
-    hbherhEtot = 0.0;
     for (int j = 0; j < esrhE->size(); j++) {
       if (esrhE->at(j) < 0.0) cout << "found esrhE = " << esrhE->at(j) << '\n';
       if (fabs(esrhEta->at(j)) < 1.566 || fabs(esrhEta->at(j)) > 2.5) continue;//skip non-endcap hits
@@ -201,18 +193,14 @@ vector<float> phoAHE3Total(vector<float> *esrhX, vector<float> *esrhY, vector<fl
   float esrhR;
   float esrhphi;
   float esrhz;
-  float hbherhR;
-  float hbherhphi;
   float delphi;
   float delr;
   float esrhEtot;
-  float hbherhEtot;
   for (int i = 0; i < phoEta->size(); i++) {
     phoeta = phoEta->at(i);
     phoR = ecal_z/sinh(phoeta);
     phophi = phoPhi->at(i);
     esrhEtot = 0.0;
-    hbherhEtot = 0.0;
     for (int j = 0; j < esrhE->size(); j++) {
       if (fabs(esrhEta->at(j)) < 1.566 || fabs(esrhEta->at(j)) > 2.5) continue;//skip non-endcap hits
       esrhR = sqrt(pow(esrhX->at(j),2)+pow(esrhY->at(j),2));
@@ -221,7 +209,7 @@ vector<float> phoAHE3Total(vector<float> *esrhX, vector<float> *esrhY, vector<fl
       delphi = fabs(esrhphi-phophi);
       delr = fabs(phoR-esrhR);
       if (delphi > pi) delphi = 2*pi - delphi;
-      if (delphi < 0.09 && (delr <= esrhZ->at(j)*tan(alpha))) {
+      if (delphi < 0.09 && (delr <= esrhz*tan(alpha))) {
         if (esrhz > -306.0 && esrhz < 0 && phoeta > 1.566) esrhEtot+=esrhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
         else if (esrhz < 306.0 && esrhz > 0 && phoeta < -1.566) esrhEtot+=esrhE->at(j);
       }
@@ -242,18 +230,14 @@ vector<float> phoAHE4Total(vector<float> *esrhX, vector<float> *esrhY, vector<fl
   float esrhR;
   float esrhphi;
   float esrhz;
-  float hbherhR;
-  float hbherhphi;
   float delphi;
   float delr;
   float esrhEtot;
-  float hbherhEtot;
   for (int i = 0; i < phoEta->size(); i++) {
     phoeta = phoEta->at(i);
     phoR = ecal_z/sinh(phoeta);
     phophi = phoPhi->at(i);
     esrhEtot = 0.0;
-    hbherhEtot = 0.0;
     for (int j = 0; j < esrhE->size(); j++) {
       if (fabs(esrhEta->at(j)) < 1.566 || fabs(esrhEta->at(j)) > 2.5) continue;//skip non-endcap hits
       esrhR = sqrt(pow(esrhX->at(j),2)+pow(esrhY->at(j),2));
@@ -262,7 +246,7 @@ vector<float> phoAHE4Total(vector<float> *esrhX, vector<float> *esrhY, vector<fl
       delphi = fabs(esrhphi-phophi);
       delr = fabs(phoR-esrhR);
       if (delphi > pi) delphi = 2*pi - delphi;
-      if (delphi < 0.09 && (delr <= esrhZ->at(j)*tan(alpha))) {
+      if (delphi < 0.09 && (delr <= esrhz*tan(alpha))) {
         if (esrhz < -306.0 && phoeta > 1.566) esrhEtot+=esrhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
         else if (esrhz > 306.0 && phoeta < -1.566) esrhEtot+=esrhE->at(j);
       }
