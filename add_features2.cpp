@@ -172,6 +172,7 @@ vector<float> phoAHE2Total(vector<float> *esrhX, vector<float> *esrhY, vector<fl
     esrhEtot = 0.0;
     hbherhEtot = 0.0;
     for (int j = 0; j < esrhE->size(); j++) {
+      if (esrhE->at(j) < 0.0) cout << "found esrhE = " << esrhE->at(j) << '\n';
       if (fabs(esrhEta->at(j)) < 1.566 || fabs(esrhEta->at(j)) > 2.5) continue;//skip non-endcap hits
       esrhR = sqrt(pow(esrhX->at(j),2)+pow(esrhY->at(j),2));
       esrhphi = esrhPhi->at(j);
@@ -179,7 +180,7 @@ vector<float> phoAHE2Total(vector<float> *esrhX, vector<float> *esrhY, vector<fl
       delphi = fabs(esrhphi-phophi);
       delr = fabs(phoR-esrhR);
       if (delphi > pi) delphi = 2*pi - delphi;
-      if (delphi < 0.09 && (delr <= esrhZ->at(j)*tan(alpha))) {
+      if (delphi < 0.09 && (delr <= esrhz*tan(alpha))) {
         if (esrhz > 0 && esrhz < 306.0 && phoeta > 1.566) esrhEtot+=esrhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
         else if (esrhz > -306.0 && esrhz < 0 && phoeta < -1.566) esrhEtot+=esrhE->at(j);
       }
@@ -277,7 +278,7 @@ int main(int argc, char** argv) {
   TTree* tree = (TTree*)f.Get("EventTree");
   tree->SetBranchStatus("*",1);
 
-  string outname = barename(infile)+"_features.root";
+  string outname = barename(infile)+"_features2.root";
   TFile fnew(outname.c_str(),"RECREATE"); // Write over last output file of same name if it exists
   TTree newtree("EventTree","Event data");
 
@@ -518,7 +519,10 @@ int main(int argc, char** argv) {
     phoNumHERHzsidenew.clear();
     phoNumESRHnew.clear();
     phoNumESRHzsidenew.clear();
+    phoAHE1Totalnew.clear();
     phoAHE2Totalnew.clear();
+    phoAHE3Totalnew.clear();
+    phoAHE4Totalnew.clear();
     esrhEnew.clear();
     esrhiEtanew.clear();
     esrhiPhinew.clear();
