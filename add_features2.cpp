@@ -123,6 +123,7 @@ vector<float> phoAHE1Total(vector<float> *esrhX, vector<float> *esrhY, vector<fl
   float esrhEtot;
   for (int i = 0; i < phoEta->size(); i++) {
     phoeta = phoEta->at(i);
+    if (fabs(phoeta) < 1.566 || fabs(phoeta) > 2.5) continue;//skip non-endcap photons
     phoR = ecal_z/sinh(phoeta);
     phophi = phoPhi->at(i);
     esrhEtot = 0.0;
@@ -160,11 +161,11 @@ vector<float> phoAHE2Total(vector<float> *esrhX, vector<float> *esrhY, vector<fl
   float esrhEtot;
   for (int i = 0; i < phoEta->size(); i++) {
     phoeta = phoEta->at(i);
+    if (fabs(phoeta) < 1.566 || fabs(phoeta) > 2.5) continue;//skip non-endcap photons
     phoR = ecal_z/sinh(phoeta);
     phophi = phoPhi->at(i);
     esrhEtot = 0.0;
     for (int j = 0; j < esrhE->size(); j++) {
-      if (esrhE->at(j) < 0.0) cout << "found esrhE = " << esrhE->at(j) << '\n';
       if (fabs(esrhEta->at(j)) < 1.566 || fabs(esrhEta->at(j)) > 2.5) continue;//skip non-endcap hits
       esrhR = sqrt(pow(esrhX->at(j),2)+pow(esrhY->at(j),2));
       esrhphi = esrhPhi->at(j);
@@ -198,6 +199,7 @@ vector<float> phoAHE3Total(vector<float> *esrhX, vector<float> *esrhY, vector<fl
   float esrhEtot;
   for (int i = 0; i < phoEta->size(); i++) {
     phoeta = phoEta->at(i);
+    if (fabs(phoeta) < 1.566 || fabs(phoeta) > 2.5) continue;//skip non-endcap photons
     phoR = ecal_z/sinh(phoeta);
     phophi = phoPhi->at(i);
     esrhEtot = 0.0;
@@ -235,6 +237,7 @@ vector<float> phoAHE4Total(vector<float> *esrhX, vector<float> *esrhY, vector<fl
   float esrhEtot;
   for (int i = 0; i < phoEta->size(); i++) {
     phoeta = phoEta->at(i);
+    if (fabs(phoeta) < 1.566 || fabs(phoeta) > 2.5) continue;//skip non-endcap photons
     phoR = ecal_z/sinh(phoeta);
     phophi = phoPhi->at(i);
     esrhEtot = 0.0;
@@ -249,6 +252,90 @@ vector<float> phoAHE4Total(vector<float> *esrhX, vector<float> *esrhY, vector<fl
       if (delphi < 0.09 && (delr <= esrhz*tan(alpha))) {
         if (esrhz < -306.0 && phoeta > 1.566) esrhEtot+=esrhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
         else if (esrhz > 306.0 && phoeta < -1.566) esrhEtot+=esrhE->at(j);
+      }
+    }
+    TotalVec.push_back(esrhEtot);
+  }
+  return TotalVec;
+}
+
+vector<float> phoIHE1Total(vector<float> *esrhX, vector<float> *esrhY, vector<float> *esrhZ, vector<float> *esrhPhi, vector<float> *esrhE, vector<float> *esrhEta, vector<float> *hbherhX, vector<float> *hbherhY, vector<float> *hbherhZ, vector<float> *hbherhPhi, vector<float> *hbherhE, vector<float> *hbherhEta, vector<float> *phoEta, vector<float> *phoPhi) {
+  vector<float> TotalVec;
+  float pi = 3.14159265358979323846;
+  float ecal_z = 319.5;//cm
+  float alpha = pi/180;//1 degree in radians
+  float phoR;
+  float phophi;
+  float phoeta;
+  float esrhR;
+  float esrhphi;
+  float esrhz;
+  float delphi;
+  float delr;
+  float delR1;
+  float delrR;
+  float esrhEtot;
+  for (int i = 0; i < phoEta->size(); i++) {
+    phoeta = phoEta->at(i);
+    if (fabs(phoeta) < 1.566 || fabs(phoeta) > 2.5) continue;//skip non-endcap photons
+    phoR = ecal_z/sinh(phoeta);
+    phophi = phoPhi->at(i);
+    esrhEtot = 0.0;
+    delR1 = 10.65/sinh(phoeta);
+    for (int j = 0; j < esrhE->size(); j++) {
+      esrhz = esrhZ->at(j);
+      if (fabs(esrhz) < 306.0) continue;//skip inner-layer esrh's
+      esrhR = sqrt(pow(esrhX->at(j),2)+pow(esrhY->at(j),2));
+      esrhphi = esrhPhi->at(j);
+      delphi = fabs(esrhphi-phophi);
+      delr = phoR-esrhR;
+      delrR = fabs(delr - delR1);
+      if (delphi > pi) delphi = 2*pi - delphi;
+      if (delphi < 0.09 && (delrR < 0.2)) {
+        if (esrhz > 306.0 && phoeta > 1.566) esrhEtot+=esrhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
+        else if (esrhz < -306.0 && phoeta < -1.566) esrhEtot+=esrhE->at(j);
+      }
+    }
+    TotalVec.push_back(esrhEtot);
+  }
+  return TotalVec;
+}
+
+vector<float> phoIHE2Total(vector<float> *esrhX, vector<float> *esrhY, vector<float> *esrhZ, vector<float> *esrhPhi, vector<float> *esrhE, vector<float> *esrhEta, vector<float> *hbherhX, vector<float> *hbherhY, vector<float> *hbherhZ, vector<float> *hbherhPhi, vector<float> *hbherhE, vector<float> *hbherhEta, vector<float> *phoEta, vector<float> *phoPhi) {
+  vector<float> TotalVec;
+  float pi = 3.14159265358979323846;
+  float ecal_z = 319.5;//cm
+  float alpha = pi/180;//1 degree in radians
+  float phoR;
+  float phophi;
+  float phoeta;
+  float esrhR;
+  float esrhphi;
+  float esrhz;
+  float delphi;
+  float delr;
+  float delR2;
+  float delrR;
+  float esrhEtot;
+  for (int i = 0; i < phoEta->size(); i++) {
+    phoeta = phoEta->at(i);
+    if (fabs(phoeta) < 1.566 || fabs(phoeta) > 2.5) continue;//skip non-endcap photons
+    phoR = ecal_z/sinh(phoeta);
+    phophi = phoPhi->at(i);
+    esrhEtot = 0.0;
+    delR2 = 15.3/sinh(phoeta);
+    for (int j = 0; j < esrhE->size(); j++) {
+      esrhz = esrhZ->at(j);
+      if (fabs(esrhz) > 306.0) continue;//skip outer-layer esrh's
+      esrhR = sqrt(pow(esrhX->at(j),2)+pow(esrhY->at(j),2));
+      esrhphi = esrhPhi->at(j);
+      delphi = fabs(esrhphi-phophi);
+      delr = phoR-esrhR;
+      delrR = fabs(delr - delR2);
+      if (delphi > pi) delphi = 2*pi - delphi;
+      if (delphi < 0.09 && (delrR < 3.1)) {
+        if (esrhz < 306.0 && esrhz > 0 && phoeta > 1.566) esrhEtot+=esrhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
+        else if (esrhz > -306.0 && esrhz < 0 && phoeta < -1.566) esrhEtot+=esrhE->at(j);
       }
     }
     TotalVec.push_back(esrhEtot);
@@ -388,6 +475,8 @@ int main(int argc, char** argv) {
   vector<float> phoAHE2Totalnew;
   vector<float> phoAHE3Totalnew;
   vector<float> phoAHE4Totalnew;
+  vector<float> phoIHE1Totalnew;
+  vector<float> phoIHE2Totalnew;
   newtree.Branch("phoE",&phoEnew);
   newtree.Branch("phoEt",&phoEtnew);
   newtree.Branch("phoEta",&phoEtanew);
@@ -412,6 +501,8 @@ int main(int argc, char** argv) {
   newtree.Branch("phoAHE2Total",&phoAHE2Totalnew);
   newtree.Branch("phoAHE3Total",&phoAHE3Totalnew);
   newtree.Branch("phoAHE4Total",&phoAHE4Totalnew);
+  newtree.Branch("phoIHE1Total",&phoIHE1Totalnew);
+  newtree.Branch("phoIHE2Total",&phoIHE2Totalnew);
   newtree.Branch("nesRH",&nesRHnew);
   newtree.Branch("esrhE",&esrhEnew);
   newtree.Branch("esrhiEta",&esrhiEtanew);
@@ -446,6 +537,8 @@ int main(int argc, char** argv) {
       phoAHE2Totalnew = phoAHE2Total(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi);
       phoAHE3Totalnew = phoAHE3Total(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi);
       phoAHE4Totalnew = phoAHE4Total(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi);
+      phoIHE1Totalnew = phoIHE1Total(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi);
+      phoIHE2Totalnew = phoIHE2Total(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi);
     }
     phoEnew = *phoE;
     phoEtnew = *phoEt;
@@ -507,6 +600,8 @@ int main(int argc, char** argv) {
     phoAHE2Totalnew.clear();
     phoAHE3Totalnew.clear();
     phoAHE4Totalnew.clear();
+    phoIHE1Totalnew.clear();
+    phoIHE2Totalnew.clear();
     esrhEnew.clear();
     esrhiEtanew.clear();
     esrhiPhinew.clear();
