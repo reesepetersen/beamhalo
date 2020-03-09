@@ -153,6 +153,43 @@ vector<float> phoAHETotal(vector<float> *esrhX, vector<float> *esrhY, vector<flo
   return TotalVec;
 }
 
+vector<float> phoHEREZAWP(vector<float> *esrhX, vector<float> *esrhY, vector<float> *esrhZ, vector<float> *esrhPhi, vector<float> *esrhE, vector<float> *esrhEta, vector<float> *hbherhX, vector<float> *hbherhY, vector<float> *hbherhZ, vector<float> *hbherhPhi, vector<float> *hbherhE, vector<float> *hbherhEta, vector<float> *phoEta, vector<float> *phoPhi) {
+  vector<float> TotalVec;
+  float pi = 3.14159265358979323846;
+  float ecal_z = 319.5;//cm
+  float alpha = pi/180;//1 degree in radians
+  float phoR;
+  float phophi;
+  float phoeta;
+  float esrhR;
+  float esrhphi;
+  float hbherhR;
+  float hbherhphi;
+  float delphi;
+  float delr;
+  float hbherhEtot;
+  float Etotal;
+  for (int i = 0; i < phoEta->size(); i++) {
+    hbherhEtot = 0.0;
+    phoeta = phoEta->at(i);
+    if (fabs(phoeta)>=1.566 and fabs(phoeta)=<2.5) {//only encap photons get non-zero HEREZAWP
+      phophi = phoPhi->at(i);
+      phoR = ecal_z/sinh(phoEta->at(i));
+      for (int j = 0; j < hbherhE->size(); j++) {
+        if (fabs(hbherhEta->at(j)) < 1.566) continue;//only look at HE hits, not HB hits
+        hbherhR = sqrt(pow(hbherhX->at(j),2)+pow(hbherhY->at(j),2));
+        hbherhphi = hbherhPhi->at(j);
+        delphi = fabs(hbherhphi-phophi);
+        delr = hbherhR-phoR;
+        if (delphi > pi) delphi = 2*pi - delphi;
+        if (delphi < 0.09 && (delr <= hbherhZ->at(j)*tan(alpha))) hbherhEtot+=hbherhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
+      }
+    }
+    TotalVec.push_back(hbherhEtot);
+  }
+  return TotalVec;
+}
+
 int main(int argc, char** argv) {
   string infile = argv[1];
   TFile f(infile.c_str()); // Create TFile object for read file
