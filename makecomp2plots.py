@@ -41,7 +41,7 @@ rtypedict = {
 
 phoR9_d = {
     "name":"phoR9",
-    "low":0,
+    "low":0.4,
     "high":1,
     "units":"R9",
     "position":0,
@@ -50,15 +50,15 @@ phoR9_d = {
 phoSigmaIEtaIEtaFull5x5_d = {
     "name":"phoSigmaIEtaIEtaFull5x5",
     "low":0,
-    "high":0.07,
+    "high":0.05,
     "units":"\sigma_{i\eta i\eta}",
     "position":1,
     "yscale":"linear",
     "nbins":100}
 phoSigmaIEtaIPhiFull5x5_d = {
     "name":"phoSigmaIEtaIPhiFull5x5",
-    "low":-0.002,
-    "high":0.002,
+    "low":-0.0006,
+    "high":0.0006,
     "units":"\sigma_{i\eta i\phi}",
     "position":2,
     "yscale":"linear",
@@ -66,15 +66,15 @@ phoSigmaIEtaIPhiFull5x5_d = {
 phoSigmaIPhiIPhiFull5x5_d = {
     "name":"phoSigmaIPhiIPhiFull5x5",
     "low":0,
-    "high":0.1,
+    "high":0.07,
     "units":"\sigma_{i\phi i\phi}",
     "position":3,
     "yscale":"linear",
     "nbins":100}
 phoSeedTime_d = {
     "name":"phoSeedTime",
-    "low":-70,
-    "high":70,
+    "low":-3.1,
+    "high":3.1,
     "units":"SeedTime",
     "position":4,
     "yscale":"log",
@@ -90,7 +90,7 @@ phoPhi_d = {
 phoHoverE_d = {
     "name":"phoHoverE",
     "low":0,
-    "high":1.8,
+    "high":1.4,
     "units":"H/E",
     "position":6,
     "yscale":"log",
@@ -114,7 +114,7 @@ phoNumESRHzside_d = {
 phoSCEtaWidth_d = {
     "name":"phoSCEtaWidth",
     "low":0,
-    "high":0.12,
+    "high":0.03,
     "units":"pho SC Eta Width",
     "position":9,
     "yscale":"linear",
@@ -122,7 +122,7 @@ phoSCEtaWidth_d = {
 phoSCPhiWidth_d = {
     "name":"phoSCPhiWidth",
     "low":0,
-    "high":0.3,
+    "high":0.14,
     "units":"pho SC Phi Width",
     "position":10,
     "yscale":"linear",
@@ -140,7 +140,23 @@ phoEt_d = {
     "low":0,
     "high":2500,
     "units":"phoEt",
-    "position":11,
+    "position":12,
+    "yscale":"log",
+    "nbins":100}
+phoHaloHE_d = {
+    "name":"phoHaloHE",
+    "low":0,
+    "high":100,
+    "units":"Halo HE",
+    "position":13,
+    "yscale":"log",
+    "nbins":100}
+phoHaloPre_d = {
+    "name":"phoHaloPre",
+    "low":0,
+    "high":0.45,
+    "units":"Halo Pre",
+    "position":14,
     "yscale":"log",
     "nbins":100}
 var_od = OrderedDict()
@@ -149,14 +165,16 @@ var_od['phoSigmaIEtaIEtaFull5x5'] = phoSigmaIEtaIEtaFull5x5_d
 var_od['phoSigmaIEtaIPhiFull5x5'] = phoSigmaIEtaIPhiFull5x5_d
 var_od['phoSigmaIPhiIPhiFull5x5'] = phoSigmaIPhiIPhiFull5x5_d
 var_od['phoSeedTime'] = phoSeedTime_d
-var_od['phoPhi'] = phoPhi_d
+#var_od['phoPhi'] = phoPhi_d
 var_od['phoHoverE'] = phoHoverE_d
 #var_od['phoNumHERHzside'] = phoNumHERHzside_d
 #var_od['phoNumESRHzside'] = phoNumESRHzside_d
 var_od['phoSCEtaWidth'] = phoSCEtaWidth_d
 var_od['phoSCPhiWidth'] = phoSCPhiWidth_d
-var_od['phoE'] = phoE_d
-var_od['phoEt'] = phoEt_d
+#var_od['phoE'] = phoE_d
+#var_od['phoEt'] = phoEt_d
+var_od['phoHaloHE'] = phoHaloHE_d
+var_od['phoHaloPre'] = phoHaloPre_d
 
 # check input file for .root extension
 infilelist = sys.argv
@@ -428,6 +446,41 @@ def plot_2D(x_var,x_range,x_units,y_var,y_range,y_units,dirstring,treename):
   if save == 'y':
     canv.SaveAs(x_var+'_vs_'+y_var+'_'+get_barename(get_filestring(dirstring))+'.png')
 
+def plot_2d(dirstring,treename,feat,feat_od):
+  r.gStyle.SetOptStat(0)
+  for ofeatname in feat_od:
+    ofeat = feat_od[ofeatname]
+    x = feat['name']
+    y = ofeat['name']
+    xnbins = feat['nbins']
+    ynbins = ofeat['nbins']
+    xlow = feat['low']
+    ylow = ofeat['low']
+    print ylow
+    xhigh = feat['high']
+    yhigh = ofeat['high']
+    xunits = feat['units']
+    yunits = ofeat['units']
+    rf = r.TFile(get_filestring(dirstring))
+    t = rf.Get(get_objectpath(dirstring,treename))
+    h = r.TH2D('h2d',y+' vs '+x,xnbins,xlow,xhigh,ynbins,ylow,yhigh)
+    h.GetXaxis().SetTitle(xunits)
+    h.GetYaxis().SetTitle(yunits)
+    sel = 'fabs(phoEta)>=1.65&&fabs(phoEta)<1.8&&phoE<5000&&phoEt>250'
+    t.Draw(y+':'+x+'>>h2d',sel)
+    can = r.TCanvas('can_'+y+'_vs_'+x,'2D '+x+' vs '+y)
+    h.SetTitle(sel)
+    h.Draw('colz')
+    can.Update()
+    can.SaveAs('two_d/'+x+'_vs_'+y+'_'+get_barename(get_filestring(dirstring))+'.png')
+
+def plot_2d_auto(dirstring,treename):
+  feat_od = var_od
+  for featname in feat_od:
+    feat = feat_od[featname]
+    feat_od.pop(featname)
+    plot_2d(dirstring,treename,feat,feat_od)
+
 def compare_vars(dirstring,treename,infilelist):
   for varname in var_od:
     var = var_od[varname]
@@ -572,6 +625,7 @@ def process_ttree(dirstring,treename):
   print "compr: compare a branch between 2 files, second is reweighted"
   print "phimip: plot phi with various MIPTotal cuts"
   print "phiahe: plot phi with various AHETotal cuts"
+  print "2d: make 2d histograms between all chosen features"
   action = raw_input("Please choose an action: ")
   if action == '1':
     plot_treebranch(dirstring,treename)
@@ -589,6 +643,8 @@ def process_ttree(dirstring,treename):
     plot_phi_MIPTotal(dirstring,treename)
   elif action == 'phiahe':
     plot_phi_AHETotal(dirstring,treename)
+  elif action == '2d':
+    plot_2d_auto(dirstring,treename)
   return chosen
 
 def process_TH1(dirstring,th1name):
