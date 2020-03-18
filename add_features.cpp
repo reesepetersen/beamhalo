@@ -165,6 +165,7 @@ vector<float> phoHaloHE(vector<float> *esrhX, vector<float> *esrhY, vector<float
   float phoy;
   float hbherhR;
   float hbherhphi;
+  float hbherheta;
   float hbherhx;
   float hbherhy;
   //float delphi;
@@ -177,13 +178,14 @@ vector<float> phoHaloHE(vector<float> *esrhX, vector<float> *esrhY, vector<float
   for (int i = 0; i < phoEta->size(); i++) {
     herhEtot = 0.0;
     phoeta = phoEta->at(i);
-    if (fabs(phoeta)>=1.566 and fabs(phoeta)<=2.6) {//only encap photons get non-zero HaloHE
+    if (fabs(phoeta)>=1.65 and fabs(phoeta)<=1.8) {//only encap photons get non-zero HaloHE
       phophi = phoPhi->at(i);
       phoR = ecal_z/sinh(phoEta->at(i));
       phox = phoR*cos(phophi);
       phoy = phoR*sin(phophi);
       for (int j = 0; j < hbherhE->size(); j++) {
-        if (fabs(hbherhEta->at(j)) < 1.566) continue;//only look at HE hits, not HB hits
+        hbherheta = hbherhEta->at(j);
+        if (fabs(hbherheta) < 1.65) continue;//only look at HE hits, not HB hits
         //hbherhR = sqrt(pow(hbherhX->at(j),2)+pow(hbherhY->at(j),2));
         //hbherhphi = hbherhPhi->at(j);
         //delphi = fabs(hbherhphi-phophi);
@@ -193,7 +195,7 @@ vector<float> phoHaloHE(vector<float> *esrhX, vector<float> *esrhY, vector<float
         dely = fabs(phoy-hbherhy);
         del = sqrt(pow(delx,2)+pow(dely,2));
         //if (delphi > pi) delphi = 2*pi - delphi;
-        if (del <= 6) herhEtot+=hbherhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
+        if (del <= 6 and check_samesign_eta(phoeta,hbherheta)) herhEtot+=hbherhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
       }
     }
     TotalVec.push_back(herhEtot);
@@ -213,6 +215,7 @@ vector<float> phoHaloPre(vector<float> *esrhX, vector<float> *esrhY, vector<floa
   float phoy;
   float esrhR;
   float esrhphi;
+  float esrheta;
   float esrhx;
   float esrhy;
   //float delphi;
@@ -231,7 +234,8 @@ vector<float> phoHaloPre(vector<float> *esrhX, vector<float> *esrhY, vector<floa
       phox = phoR*cos(phophi);
       phoy = phoR*sin(phophi);
       for (int j = 0; j < esrhE->size(); j++) {
-        if (fabs(esrhEta->at(j)) < 1.566) continue;//only look at HE hits, not HB hits
+        esrheta = esrhEta->at(j);
+        if (fabs(esrheta) < 1.566) continue;//only look at HE hits, not HB hits
         //esrhR = sqrt(pow(esrhX->at(j),2)+pow(esrhY->at(j),2));
         //esrhphi = esrhPhi->at(j);
         //delphi = fabs(esrhphi-phophi);
@@ -241,7 +245,7 @@ vector<float> phoHaloPre(vector<float> *esrhX, vector<float> *esrhY, vector<floa
         dely = fabs(phoy-esrhy);
         del = sqrt(pow(delx,2)+pow(dely,2));
         //if (delphi > pi) delphi = 2*pi - delphi;
-        if (del <= 3.1) esrhEtot+=esrhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
+        if (del <= 3.1 and check_samesign_eta(phoeta,esrheta)) esrhEtot+=esrhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
       }
     }
     TotalVec.push_back(esrhEtot);

@@ -446,7 +446,7 @@ def plot_2D(x_var,x_range,x_units,y_var,y_range,y_units,dirstring,treename):
   if save == 'y':
     canv.SaveAs(x_var+'_vs_'+y_var+'_'+get_barename(get_filestring(dirstring))+'.png')
 
-def plot_2d(dirstring,treename,feat,feat_od):
+def plot_2d(dirstring,treename,feat,feat_od,outdir):
   r.gStyle.SetOptStat(0)
   for ofeatname in feat_od:
     ofeat = feat_od[ofeatname]
@@ -456,7 +456,6 @@ def plot_2d(dirstring,treename,feat,feat_od):
     ynbins = ofeat['nbins']
     xlow = feat['low']
     ylow = ofeat['low']
-    print ylow
     xhigh = feat['high']
     yhigh = ofeat['high']
     xunits = feat['units']
@@ -471,15 +470,19 @@ def plot_2d(dirstring,treename,feat,feat_od):
     can = r.TCanvas('can_'+y+'_vs_'+x,'2D '+x+' vs '+y)
     h.SetTitle(sel)
     h.Draw('colz')
+    if 'phoHalo' in x or 'phoHalo' in y:
+      can.SetLogz()
     can.Update()
-    can.SaveAs('two_d/'+x+'_vs_'+y+'_'+get_barename(get_filestring(dirstring))+'.png')
+    can.SaveAs(outdir+'/'+x+'_vs_'+y+'_'+get_barename(get_filestring(dirstring))+'.png')
 
 def plot_2d_auto(dirstring,treename):
+  outdir = raw_input('output dir: ')
+  os.makedirs(outdir)
   feat_od = var_od
   for featname in feat_od:
     feat = feat_od[featname]
     feat_od.pop(featname)
-    plot_2d(dirstring,treename,feat,feat_od)
+    plot_2d(dirstring,treename,feat,feat_od,outdir)
 
 def compare_vars(dirstring,treename,infilelist):
   for varname in var_od:
