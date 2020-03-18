@@ -465,7 +465,7 @@ def plot_2d(dirstring,treename,feat,feat_od,outdir):
     h = r.TH2D('h2d',y+' vs '+x,xnbins,xlow,xhigh,ynbins,ylow,yhigh)
     h.GetXaxis().SetTitle(xunits)
     h.GetYaxis().SetTitle(yunits)
-    sel = 'fabs(phoEta)>=1.65&&fabs(phoEta)<1.8&&phoE<5000&&phoEt>250'
+    sel = 'fabs(phoEta)>=1.65&&fabs(phoEta)<1.8&&phoE<5000&&phoEt>50&&pfMET>200&&HLTPho>>9&1'
     t.Draw(y+':'+x+'>>h2d',sel)
     can = r.TCanvas('can_'+y+'_vs_'+x,'2D '+x+' vs '+y)
     h.SetTitle(sel)
