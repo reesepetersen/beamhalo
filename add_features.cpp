@@ -1,6 +1,7 @@
 // Get some info out of a non-edm root file
 #include <cstdio>
 #include <cstdlib>
+#include <random>
 #include <cmath>
 #include <string>
 #include <sstream>
@@ -253,6 +254,54 @@ vector<float> phoHaloPre(vector<float> *esrhX, vector<float> *esrhY, vector<floa
   return TotalVec;
 }
 
+bool near_object(float esrhx, float esrhy, float esrheta, vector<float>* obPhi, vector<float>* obEta, float ecal_z) {
+  bool near = false;
+  float obR;
+  float obphi;
+  float obeta;
+  float obx;
+  float oby;
+  float dely;
+  float delx;
+  float del;
+  int nob = obEta->size();
+    for (int i = 0; i < nob; i++) {
+      obphi = obPhi->at(i);
+      obeta = obEta->at(i);
+      obR = ecal_z/sinh(obeta);
+      obx = obR*cos(obphi);
+      oby = obR*sin(obphi);
+      delx = fabs(obx-esrhx);
+      dely = fabs(oby-esrhy);
+      del = sqrt(pow(delx,2)+pow(dely,2));
+      if (del <=6 and check_samesign_eta(obeta,esrheta) and fabs(obeta) > 1.65) near = true;
+    }
+  return near;
+}
+
+vector<int> esrhHaloPreID(vector<float> *esrhX, vector<float> *esrhY, vector<float> *esrhZ, vector<float> *esrhPhi, vector<float> *esrhE, vector<float> *esrhEta, vector<float> *hbherhX, vector<float> *hbherhY, vector<float> *hbherhZ, vector<float> *hbherhPhi, vector<float> *hbherhE, vector<float> *hbherhEta, vector<float> *phoEta, vector<float> *phoPhi, vector<float> *eleEta, vector<float> *elePhi, vector<float> *AK4CHSJet_Eta, vector<float> *AK4CHSJet_Phi, vector<float> *muEta, vector<float> *muPhi) {
+  vector<int> esrhIDvec;
+  float ecal_z = 319.5;//cm
+  float esrhR;
+  float esrhphi;
+  float esrheta;
+  float esrhx;
+  float esrhy;
+  int nesrh = esrhE->size();
+  int id;
+  for (int j = 0; j < nesrh; j++) {//esrh loop
+    esrheta = esrhEta->at(j);
+    esrhx = esrhX->at(j);
+    esrhy = esrhY->at(j);
+    id = 0;
+    if (near_object(esrhx,esrhy,esrheta,phoPhi,phoEta,ecal_z)) id+=1;//near a photon
+    if (near_object(esrhx,esrhy,esrheta,elePhi,eleEta,ecal_z)) id+=2;//near a electron
+    if (near_object(esrhx,esrhy,esrheta,muPhi,muEta,ecal_z)) id+=4;//near a muon
+    esrhIDvec.push_back(id);
+  }
+  return esrhIDvec;
+}
+
 int main(int argc, char** argv) {
   string infile = argv[1];
   TFile f(infile.c_str()); // Create TFile object for read file
@@ -303,6 +352,12 @@ int main(int argc, char** argv) {
   vector<float>* hbherhX = nullptr;
   vector<float>* hbherhY = nullptr;
   vector<float>* hbherhZ = nullptr;
+  vector<float>* eleEta = nullptr;
+  vector<float>* elePhi = nullptr;
+  vector<float>* AK4CHSJet_Eta = nullptr;
+  vector<float>* AK4CHSJet_Phi = nullptr;
+  vector<float>* muEta = nullptr;
+  vector<float>* muPhi = nullptr;
   tree->SetBranchAddress("phoE",&phoE);
   tree->SetBranchAddress("phoEt",&phoEt);
   tree->SetBranchAddress("phoEta",&phoEta);
@@ -340,6 +395,12 @@ int main(int argc, char** argv) {
   tree->SetBranchAddress("hbherhX",&hbherhX);
   tree->SetBranchAddress("hbherhY",&hbherhY);
   tree->SetBranchAddress("hbherhZ",&hbherhZ);
+  tree->SetBranchAddress("eleEta",&eleEta);
+  tree->SetBranchAddress("elePhi",&elePhi);
+  tree->SetBranchAddress("AK4CHSJet_Eta",&AK4CHSJet_Eta);
+  tree->SetBranchAddress("AK4CHSJet_Phi",&AK4CHSJet_Phi);
+  tree->SetBranchAddress("muEta",&muEta);
+  tree->SetBranchAddress("muPhi",&muPhi);
   vector<float> phoNumHERHnew;
   vector<float> phoNumHERHzsidenew;
   vector<float> phoNumESRHnew;
@@ -347,6 +408,7 @@ int main(int argc, char** argv) {
   vector<float> phoAHETotalnew;
   vector<float> phoHaloHEnew;
   vector<float> phoHaloPrenew;
+  vector<int> esrhHaloPreIDnew;
   newtree->Branch("phoNumHERH",&phoNumHERHnew);
   newtree->Branch("phoNumHERHzside",&phoNumHERHzsidenew);
   newtree->Branch("phoNumESRH",&phoNumESRHnew);
@@ -354,6 +416,7 @@ int main(int argc, char** argv) {
   newtree->Branch("phoAHETotal",&phoAHETotalnew);
   newtree->Branch("phoHaloHE",&phoHaloHEnew);
   newtree->Branch("phoHaloPre",&phoHaloPrenew);
+  newtree->Branch("esrhHaloPreID",&esrhHaloPreIDnew);
   int n = tree->GetEntries();
   float fn = n;
   for (Int_t i=0; i<n; i++) {
@@ -366,6 +429,7 @@ int main(int argc, char** argv) {
       phoAHETotalnew = phoAHETotal(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi);
       phoHaloHEnew = phoHaloHE(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi);
       phoHaloPrenew = phoHaloPre(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi);
+      esrhHaloPreIDnew = esrhHaloPreID(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi, eleEta, elePhi, AK4CHSJet_Eta, AK4CHSJet_Phi, muEta, muPhi);
     }
     newtree->Fill();
     phoNumHERHnew.clear();
@@ -375,6 +439,7 @@ int main(int argc, char** argv) {
     phoAHETotalnew.clear();
     phoHaloHEnew.clear();
     phoHaloPrenew.clear();
+    esrhHaloPreIDnew.clear();
   }
   newtree->Write();
   fnew.Close();
