@@ -72,17 +72,12 @@ int main(int argc, char** argv) {
     int npho;
     float phoeta;
     bool phopass;
-    cout << "got to for loop\n";
     for (int i=0; i<n; i++) {
-      cout << "start event loop\n";
       tree->GetEntry(i);
-      cout << "got entry\n";
       if (HLTPho>>9&1 == 1 and pfMET > 200.0f and beamHaloSummary>>2&1==1) {
-        cout << "pass event level\n";
         phopass = false;
         npho = phoEta->size();
         for (int j = 0; j < npho; j++) {
-          cout << "start photon loop\n";
           phoeta = phoEta->at(j);
           if (fabs(phoeta) >= 1.65 and fabs(phoeta) <= 1.8 and phoE->at(j) < 5000 and phoEt->at(j) > 50) phopass = true;
         }
