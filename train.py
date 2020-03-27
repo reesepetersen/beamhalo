@@ -76,7 +76,7 @@ for event in sigFeat:
   if len(event[0]) == 1:
     new_event = []
     for feature in event:
-      new_event.append(feature[0])#feature[0]
+      new_event.append(feature[0])
     sigList.append(tuple(new_event))
   else:
     temp_list = []

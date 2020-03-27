@@ -617,6 +617,34 @@ def plot_phi_AHETotal(dirstring,treename):
   for i in [-0.1,0.0,0.1,1.0,5.0,10.0,50.0,100.0]:
     plot_treebranch_AHE(dirstring,treename,"phoAHETotal>"+str(round(i,3))+"&&fabs(phoEta)>1.566")
 
+def xy(dirstring,treename):
+  r.gStyle.SetOptStat(0)
+  x = 'esrhX'
+  y = 'esrhY'
+  xnbins = 100
+  ynbins = 100
+  xlow = -127
+  ylow = -127
+  xhigh = 127
+  yhigh = 127
+  xunits = 'x (cm)'
+  yunits = 'y (cm)'
+  rf = r.TFile(get_filestring(dirstring))
+  t = rf.Get(get_objectpath(dirstring,treename))
+  h = r.TH2D('h2d',y+' vs '+x,xnbins,xlow,xhigh,ynbins,ylow,yhigh)
+  h.GetXaxis().SetTitle(xunits)
+  h.GetYaxis().SetTitle(yunits)
+  h.SetContour(2)
+  sel = 'fabs(phoEta)>=1.65&&fabs(phoEta)<1.8&&phoE<5000&&phoEt>50&&pfMET>200&&HLTPho>>9&1'
+  t.Draw(y+':'+x+'>>h2d',sel)
+  can = r.TCanvas('can_'+y+'_vs_'+x,'2D '+x+' vs '+y)
+  h.SetTitle(sel)
+  h.Draw('colz')
+  #if 'phoHalo' in x or 'phoHalo' in y:
+  #  can.SetLogz()
+  can.Update()
+  can.SaveAs(x+'_vs_'+y+'_'+get_barename(get_filestring(dirstring))+'.png')
+
 def process_ttree(dirstring,treename):
   print "TTree: "+treename
   chosen = {}
@@ -629,6 +657,7 @@ def process_ttree(dirstring,treename):
   print "phimip: plot phi with various MIPTotal cuts"
   print "phiahe: plot phi with various AHETotal cuts"
   print "2d: make 2d histograms between all chosen features"
+  print "xy: make x,y 2d histograms of esrh and herh with photons and electrons"
   action = raw_input("Please choose an action: ")
   if action == '1':
     plot_treebranch(dirstring,treename)
@@ -648,6 +677,8 @@ def process_ttree(dirstring,treename):
     plot_phi_AHETotal(dirstring,treename)
   elif action == '2d':
     plot_2d_auto(dirstring,treename)
+  elif action == 'xy':
+    xy(dirstring,treename)
   return chosen
 
 def process_TH1(dirstring,th1name):

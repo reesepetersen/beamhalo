@@ -274,7 +274,7 @@ bool near_object(float esrhx, float esrhy, float esrheta, vector<float>* obPhi, 
       delx = fabs(obx-esrhx);
       dely = fabs(oby-esrhy);
       del = sqrt(pow(delx,2)+pow(dely,2));
-      if (del <=6 and check_samesign_eta(obeta,esrheta) and fabs(obeta) > 1.65) near = true;
+      if (del <=13.5 and check_samesign_eta(obeta,esrheta) and fabs(obeta) > 1.65) near = true; // 13.5 cm is estimated from x,y plots of preshower hits and photons.
     }
   return near;
 }
