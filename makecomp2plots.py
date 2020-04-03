@@ -159,22 +159,112 @@ phoHaloPre_d = {
     "position":14,
     "yscale":"log",
     "nbins":100}
+phoEnWeAn_d = {
+    "name":"phoEnWeAn",
+    "low":-1,
+    "high":1,
+    "units":"Energy-weighted Angle",
+    "position":15,
+    "yscale":"log",
+    "nbins":100}
+phoA1_d = {
+    "name":"phoA1",
+    "low":-0.9,
+    "high":1,
+    "units":"Region 1 Angle",
+    "position":16,
+    "yscale":"log",
+    "nbins":100}
+phoA2_d = {
+    "name":"phoA2",
+    "low":-0.9,
+    "high":1,
+    "units":"Region 2 Angle",
+    "position":17,
+    "yscale":"log",
+    "nbins":100}
+phoE1_d = {
+    "name":"phoE1",
+    "low":0,
+    "high":100,
+    "units":"Region 1 Energy",
+    "position":18,
+    "yscale":"log",
+    "nbins":100}
+phoE2_d = {
+    "name":"phoE2",
+    "low":0,
+    "high":100,
+    "units":"Region 2 Energy",
+    "position":19,
+    "yscale":"log",
+    "nbins":100}
+phoPreEnWeAn_d = {
+    "name":"phoPreEnWeAn",
+    "low":-1,
+    "high":1,
+    "units":"Energy-weighted Angle",
+    "position":15,
+    "yscale":"log",
+    "nbins":100}
+phoPreA1_d = {
+    "name":"phoPreA1",
+    "low":-0.9,
+    "high":1,
+    "units":"Region 1 Angle",
+    "position":16,
+    "yscale":"log",
+    "nbins":100}
+phoPreA2_d = {
+    "name":"phoPreA2",
+    "low":-0.9,
+    "high":1,
+    "units":"Region 2 Angle",
+    "position":17,
+    "yscale":"log",
+    "nbins":100}
+phoPreE1_d = {
+    "name":"phoPreE1",
+    "low":0,
+    "high":100,
+    "units":"Region 1 Energy",
+    "position":18,
+    "yscale":"log",
+    "nbins":100}
+phoPreE2_d = {
+    "name":"phoPreE2",
+    "low":0,
+    "high":100,
+    "units":"Region 2 Energy",
+    "position":19,
+    "yscale":"log",
+    "nbins":100}
 var_od = OrderedDict()
-var_od['phoR9'] = phoR9_d
-var_od['phoSigmaIEtaIEtaFull5x5'] = phoSigmaIEtaIEtaFull5x5_d
-var_od['phoSigmaIEtaIPhiFull5x5'] = phoSigmaIEtaIPhiFull5x5_d
-var_od['phoSigmaIPhiIPhiFull5x5'] = phoSigmaIPhiIPhiFull5x5_d
-var_od['phoSeedTime'] = phoSeedTime_d
+#var_od['phoR9'] = phoR9_d
+#var_od['phoSigmaIEtaIEtaFull5x5'] = phoSigmaIEtaIEtaFull5x5_d
+#var_od['phoSigmaIEtaIPhiFull5x5'] = phoSigmaIEtaIPhiFull5x5_d
+#var_od['phoSigmaIPhiIPhiFull5x5'] = phoSigmaIPhiIPhiFull5x5_d
+#var_od['phoSeedTime'] = phoSeedTime_d
 #var_od['phoPhi'] = phoPhi_d
-var_od['phoHoverE'] = phoHoverE_d
+#var_od['phoHoverE'] = phoHoverE_d
 #var_od['phoNumHERHzside'] = phoNumHERHzside_d
 #var_od['phoNumESRHzside'] = phoNumESRHzside_d
-var_od['phoSCEtaWidth'] = phoSCEtaWidth_d
-var_od['phoSCPhiWidth'] = phoSCPhiWidth_d
+#var_od['phoSCEtaWidth'] = phoSCEtaWidth_d
+#var_od['phoSCPhiWidth'] = phoSCPhiWidth_d
 #var_od['phoE'] = phoE_d
 #var_od['phoEt'] = phoEt_d
 var_od['phoHaloHE'] = phoHaloHE_d
 var_od['phoHaloPre'] = phoHaloPre_d
+var_od['phoEnWeAn'] = phoEnWeAn_d
+var_od['phoE1'] = phoE1_d
+var_od['phoE2'] = phoE2_d
+var_od['phoA1'] = phoA1_d
+var_od['phoA2'] = phoA2_d
+var_od['phoPreEnWeAn'] = phoPreEnWeAn_d
+var_od['phoPreE1'] = phoPreE1_d
+var_od['phoPreE2'] = phoPreE2_d
+var_od['phoPreA1'] = phoPreA1_d
+var_od['phoPreA2'] = phoPreA2_d
 
 # check input file for .root extension
 infilelist = sys.argv
@@ -369,9 +459,11 @@ def get_color(filestring):
   elif 'tm' in filestring and 'MC' in filestring:
     return r.kGray+2
   elif 'tm' in filestring and 'data' in filestring:
-    return r.kBlack
+    return r.kBlue
   elif 'bhvertical' in filestring:
     return r.kCyan+1
+  elif 'MC' in filestring:
+    return r.kBlack
 
 def compare_var_from_files(name,dirstring,treename,infilelist,hrlow,hrhigh,hist_units,nbins):
   file1 = infilelist[1]

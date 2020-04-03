@@ -334,7 +334,7 @@ vector<int> hbherhReg(float phoSCPhi, float phoSCEta, vector<float>* hbherhE, ve
   float dphi;
   float dx;
   float dy;
-  float phoSCR = ecal_z/sinh(phoSCEta);
+  float phoSCR = fabs(ecal_z/sinh(phoSCEta));
   float phox = phoSCR*cos(phoSCPhi);
   float phoy = phoSCR*sin(phoSCPhi);
   float drho;
@@ -344,14 +344,14 @@ vector<int> hbherhReg(float phoSCPhi, float phoSCEta, vector<float>* hbherhE, ve
   vector<int> Reg;
   for(int i = 0; i < nhbherh; i++) {
     hbherhR = sqrt(pow(hbherhX->at(i),2)+pow(hbherhY->at(i),2));
-    if (hbherhR <= 31 or hbherhR >= 172 or not check_samesign_eta(phoSCEta,hbherhZ->at(i))) {
+    if (hbherhR <= 31 or hbherhR >= 153 or not check_samesign_eta(phoSCEta,hbherhZ->at(i))) {
       Reg.push_back(0);
       continue;
     }
     dphi = fabs(hbherhPhi->at(i)-phoSCPhi);
     if (dphi > pi) dphi = 2*pi - dphi;
     dx = fabs(hbherhX->at(i)-phox);
-    dy = fabs(hbherhX->at(i)-phoy);
+    dy = fabs(hbherhY->at(i)-phoy);
     drho = sqrt(pow(dx,2)+pow(dy,2));
     deta = fabs(hbherhEta->at(i)-phoSCEta);
     dR = sqrt(pow(dphi,2)+pow(deta,2));
@@ -370,7 +370,7 @@ vector<float> E1A1E2A2(float phoSCPhi, float phoSCEta, vector<float>* hbherhE, v
   if (reg_check == 0) return {-1,-1,-1,-1};  
   vector<float> EA1EA2;
   float ecal_z = 319.5;
-  float phoSCR = ecal_z/sinh(phoSCEta);
+  float phoSCR = fabs(ecal_z/sinh(phoSCEta));
   float phoX = phoSCR*cos(phoSCPhi);
   float phoY = phoSCR*sin(phoSCPhi);
   float phoZ = ecal_z;
@@ -432,6 +432,119 @@ float phoEnWeAn(vector<float> EA12) {
   float A2 = EA12[3];
   float enwean = (A1*E1+A2*E2)/(E1+E2);
   return enwean;
+}
+
+vector<int> esrhReg(float phoSCPhi, float phoSCEta, vector<float>* esrhE, vector<float>* esrhX, vector<float>* esrhY, vector<float>* esrhZ, vector<float>* esrhPhi, vector<float>* esrhPlane) {
+  float pi = 3.14159265358979323846;
+  float ecal_z = 319.5;
+  int nesrh = esrhE->size();
+  //float dphi;
+  float dx;
+  float dy;
+  float dfx1;
+  float dfy1;
+  float dfx2;
+  float dfy2;
+  float phoSCR = fabs(ecal_z/sinh(phoSCEta));
+  float phox = phoSCR*cos(phoSCPhi);
+  float phoy = phoSCR*sin(phoSCPhi);
+  float fauSCR1 = phoSCR-10.65/sinh(fabs(phoSCEta));
+  float fauSCR2 = phoSCR-15.3/sinh(fabs(phoSCEta));
+  float faux1 = fauSCR1*cos(phoSCPhi);
+  float fauy1 = fauSCR1*sin(phoSCPhi);
+  float faux2 = fauSCR2*cos(phoSCPhi);
+  float fauy2 = fauSCR2*sin(phoSCPhi);
+  float drho;
+  float drho1;
+  float drho2;
+  int reg;
+  int esrhR;
+  vector<int> Reg;
+  for(int i = 0; i < nesrh; i++) {
+    esrhR = sqrt(pow(esrhX->at(i),2)+pow(esrhY->at(i),2));
+    if (not check_samesign_eta(phoSCEta,esrhZ->at(i))) {
+      Reg.push_back(0);
+      continue;
+    }
+    //dphi = fabs(esrhPhi->at(i)-phoSCPhi);
+    //if (dphi > pi) dphi = 2*pi - dphi;
+    dx = fabs(esrhX->at(i)-phox);
+    dy = fabs(esrhY->at(i)-phoy);
+    dfx1 = fabs(esrhX->at(i)-faux1);
+    dfy1 = fabs(esrhY->at(i)-fauy1);
+    dfx2 = fabs(esrhX->at(i)-faux2);
+    dfy2 = fabs(esrhY->at(i)-fauy2);
+    drho = sqrt(pow(dx,2)+pow(dy,2));
+    drho1 = sqrt(pow(dfx1,2)+pow(dfy1,2));
+    drho2 = sqrt(pow(dfx2,2)+pow(dfy2,2));
+    reg = 0;
+    if (drho < 13.5) reg += 1;
+    if ((drho1 <= 13.5 and esrhPlane->at(i)==1) or (drho2 <= 13.5 and esrhPlane->at(i)==2)) reg += 2;
+    Reg.push_back(reg);
+  }
+  return Reg;
+}
+
+vector<float> preE1A1E2A2(float phoSCPhi, float phoSCEta, vector<float>* esrhE, vector<float>* esrhX, vector<float>* esrhY, vector<float>* esrhZ, vector<int> Reg) {
+  int reg_check = 0;
+  for (int i = 0; i < Reg.size(); i++) {
+    reg_check += Reg[i];
+  }
+  if (reg_check == 0) return {-1,-1,-1,-1};  
+  vector<float> EA1EA2;
+  float ecal_z = 319.5;
+  float phoSCR = fabs(ecal_z/sinh(phoSCEta));
+  float phoX = phoSCR*cos(phoSCPhi);
+  float phoY = phoSCR*sin(phoSCPhi);
+  float phoZ = ecal_z;
+  int nesrh = esrhE->size();
+  float E;
+  float E1 = 0;
+  float E2 = 0;
+  float EX1 = 0;
+  float EX2 = 0;
+  float EY1 = 0;
+  float EY2 = 0;
+  float EZ1 = 0;
+  float EZ2 = 0;
+  int reg;
+  for(int i = 0; i < nesrh; i++) {
+    reg = Reg[i];
+    if (reg == 0) continue;
+    if (reg == 1 or reg==3) {
+      E = esrhE->at(i);
+      E1 += E;
+      EX1 += E*esrhX->at(i);
+      EY1 += E*esrhY->at(i);
+      EZ1 += E*esrhZ->at(i);
+    }
+    if (reg == 2 or reg==3) {
+      E = esrhE->at(i);
+      E2 += E;
+      EX2 += E*esrhX->at(i);
+      EY2 += E*esrhY->at(i);
+      EZ2 += E*esrhZ->at(i);
+    }
+  }
+  float avx1 = EX1/E1;
+  float avy1 = EY1/E1;
+  float avz1 = EZ1/E1;
+  float avx2 = EX2/E2;
+  float avy2 = EY2/E2;
+  float avz2 = EZ2/E2;
+  float avr1 = sqrt(pow(avx1,2)+pow(avy1,2));
+  float avr2 = sqrt(pow(avx2,2)+pow(avy2,2));
+  float dr1 = phoSCR-avr1;
+  float dz1 = fabs(avz1-phoZ);
+  float A1 = atan2(dr1,dz1);
+  float dr2 = phoSCR-avr2;
+  float dz2 = fabs(avz2-phoZ);
+  float A2 = atan2(dr2,dz2);
+  EA1EA2.push_back(E1);
+  EA1EA2.push_back(A1);
+  EA1EA2.push_back(E2);
+  EA1EA2.push_back(A2);
+  return EA1EA2;
 }
 
 int main(int argc, char** argv) {
@@ -545,6 +658,11 @@ int main(int argc, char** argv) {
   vector<float> phoE2new;
   vector<float> phoA2new;
   vector<float> phoEnWeAnnew;
+  vector<float> phoPreE1new;
+  vector<float> phoPreA1new;
+  vector<float> phoPreE2new;
+  vector<float> phoPreA2new;
+  vector<float> phoPreEnWeAnnew;
   vector<int> esrhHaloPreIDnew;
   vector<int> herhHaloHEIDnew;
   newtree->Branch("phoNumHERH",&phoNumHERHnew);
@@ -559,6 +677,11 @@ int main(int argc, char** argv) {
   newtree->Branch("phoE2",&phoE2new);
   newtree->Branch("phoA2",&phoA2new);
   newtree->Branch("phoEnWeAn",&phoEnWeAnnew);
+  newtree->Branch("phoPreE1",&phoPreE1new);
+  newtree->Branch("phoPreA1",&phoPreA1new);
+  newtree->Branch("phoPreE2",&phoPreE2new);
+  newtree->Branch("phoPreA2",&phoPreA2new);
+  newtree->Branch("phoPreEnWeAn",&phoPreEnWeAnnew);
   newtree->Branch("esrhHaloPreID",&esrhHaloPreIDnew);
   newtree->Branch("herhHaloHEID",&herhHaloHEIDnew);
   int n = tree->GetEntries();
@@ -570,13 +693,20 @@ int main(int argc, char** argv) {
       phoNumHERHzsidenew.push_back(get_close_phi_herhzside(phoPhi->at(j),phoEta->at(j),hbherhPhi,hbherhEta));
       phoNumESRHnew.push_back(get_close_phi_esrh(phoPhi->at(j),esrhPhi,esrhEta));
       phoNumESRHzsidenew.push_back(get_close_phi_esrhzside(phoPhi->at(j),phoEta->at(j),esrhPhi,esrhEta));
-      vector<int> Reg = hbherhReg(phoSCPhi->at(j), phoSCEta->at(j), hbherhE, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhEta);
-      vector<float> EA12 = E1A1E2A2(phoSCPhi->at(j), phoSCEta->at(j), hbherhE, hbherhX, hbherhY, hbherhZ, Reg);
+      vector<int> heReg = hbherhReg(phoSCPhi->at(j), phoSCEta->at(j), hbherhE, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhEta);
+      vector<int> preReg = hbherhReg(phoSCPhi->at(j), phoSCEta->at(j), hbherhE, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhEta);
+      vector<float> EA12 = E1A1E2A2(phoSCPhi->at(j), phoSCEta->at(j), hbherhE, hbherhX, hbherhY, hbherhZ, heReg);
+      vector<float> preEA12 = preE1A1E2A2(phoSCPhi->at(j), phoSCEta->at(j), hbherhE, hbherhX, hbherhY, hbherhZ, preReg);
       phoE1new.push_back(EA12[0]);
       phoA1new.push_back(EA12[1]);
       phoE2new.push_back(EA12[2]);
       phoA2new.push_back(EA12[3]);
       phoEnWeAnnew.push_back(phoEnWeAn(EA12));
+      phoPreE1new.push_back(preEA12[0]);
+      phoPreA1new.push_back(preEA12[1]);
+      phoPreE2new.push_back(preEA12[2]);
+      phoPreA2new.push_back(preEA12[3]);
+      phoPreEnWeAnnew.push_back(phoEnWeAn(preEA12));
     }
     phoAHETotalnew = phoAHETotal(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi);
     phoHaloHEnew = phoHaloHE(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi);
@@ -596,6 +726,11 @@ int main(int argc, char** argv) {
     phoE2new.clear();
     phoA2new.clear();
     phoEnWeAnnew.clear();
+    phoPreE1new.clear();
+    phoPreA1new.clear();
+    phoPreE2new.clear();
+    phoPreA2new.clear();
+    phoPreEnWeAnnew.clear();
     esrhHaloPreIDnew.clear();
     herhHaloHEIDnew.clear();
   }
