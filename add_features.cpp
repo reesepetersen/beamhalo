@@ -344,7 +344,7 @@ vector<int> hbherhReg(float phoSCPhi, float phoSCEta, vector<float>* hbherhE, ve
   vector<int> Reg;
   for(int i = 0; i < nhbherh; i++) {
     hbherhR = sqrt(pow(hbherhX->at(i),2)+pow(hbherhY->at(i),2));
-    if (hbherhR <= 31 or hbherhR >= 153 or not check_samesign_eta(phoSCEta,hbherhZ->at(i))) {
+    if (not check_samesign_eta(phoSCEta,hbherhZ->at(i))) {
       Reg.push_back(0);
       continue;
     }
@@ -694,9 +694,9 @@ int main(int argc, char** argv) {
       phoNumESRHnew.push_back(get_close_phi_esrh(phoPhi->at(j),esrhPhi,esrhEta));
       phoNumESRHzsidenew.push_back(get_close_phi_esrhzside(phoPhi->at(j),phoEta->at(j),esrhPhi,esrhEta));
       vector<int> heReg = hbherhReg(phoSCPhi->at(j), phoSCEta->at(j), hbherhE, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhEta);
-      vector<int> preReg = hbherhReg(phoSCPhi->at(j), phoSCEta->at(j), hbherhE, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhEta);
+      vector<int> preReg = esrhReg(phoSCPhi->at(j), phoSCEta->at(j), esrhE, esrhX, esrhY, esrhZ, esrhPhi, esrhEta);
       vector<float> EA12 = E1A1E2A2(phoSCPhi->at(j), phoSCEta->at(j), hbherhE, hbherhX, hbherhY, hbherhZ, heReg);
-      vector<float> preEA12 = preE1A1E2A2(phoSCPhi->at(j), phoSCEta->at(j), hbherhE, hbherhX, hbherhY, hbherhZ, preReg);
+      vector<float> preEA12 = preE1A1E2A2(phoSCPhi->at(j), phoSCEta->at(j), esrhE, esrhX, esrhY, esrhZ, preReg);
       phoE1new.push_back(EA12[0]);
       phoA1new.push_back(EA12[1]);
       phoE2new.push_back(EA12[2]);
