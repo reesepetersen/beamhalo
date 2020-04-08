@@ -48,9 +48,9 @@ string barename(string filepath) {
   return bname;
 }
 
-bool check_samesign_eta(float phoEta, float hbherhEta) {
-  if (phoEta > 0 && hbherhEta > 0) return true;
-  else if (phoEta < 0 && hbherhEta < 0) return true;
+bool samesign(float thing1, float thing2) {
+  if (thing1 > 0 && thing2 > 0) return true;
+  else if (thing1 < 0 && thing2 < 0) return true;
   else return false;
 }
 
@@ -75,7 +75,7 @@ int get_close_phi_herhzside(float phoPhi, float phoEta, vector<float> *hbherhPhi
     if (fabs(hbherhEta->at(i)) < 1.566) continue;//only look at HE hits, not HB hits
     delphi = fabs(hbherhPhi->at(i)-phoPhi);
     if (delphi > pi) delphi = 2*pi - delphi;
-    bool samesign_eta = check_samesign_eta(phoEta,hbherhEta->at(i));
+    bool samesign_eta = samesign(phoEta,hbherhEta->at(i));
     if (delphi < 0.09 && samesign_eta) herh_count++; //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
   }
   return herh_count;
@@ -102,7 +102,7 @@ int get_close_phi_esrhzside(float phoPhi, float phoEta, vector<float> *esrhPhi,v
     if (fabs(esrhEta->at(i)) < 1.566) continue;//only look at HE hits, not HB hits
     delphi = fabs(esrhPhi->at(i)-phoPhi);
     if (delphi > pi) delphi = 2*pi - delphi;
-    bool samesign_eta = check_samesign_eta(phoEta,esrhEta->at(i));
+    bool samesign_eta = samesign(phoEta,esrhEta->at(i));
     if (delphi < 0.09 && samesign_eta) esrh_count++; //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
   }
   return esrh_count;
@@ -196,7 +196,7 @@ vector<float> phoHaloHE(vector<float> *esrhX, vector<float> *esrhY, vector<float
         dely = fabs(phoy-hbherhy);
         del = sqrt(pow(delx,2)+pow(dely,2));
         //if (delphi > pi) delphi = 2*pi - delphi;
-        if (del <= 25 and check_samesign_eta(phoeta,hbherheta)) herhEtot+=hbherhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
+        if (del <= 25 and samesign(phoeta,hbherheta)) herhEtot+=hbherhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
       }
     }
     TotalVec.push_back(herhEtot);
@@ -246,7 +246,7 @@ vector<float> phoHaloPre(vector<float> *esrhX, vector<float> *esrhY, vector<floa
         dely = fabs(phoy-esrhy);
         del = sqrt(pow(delx,2)+pow(dely,2));
         //if (delphi > pi) delphi = 2*pi - delphi;
-        if (del <= 13.5 and check_samesign_eta(phoeta,esrheta)) esrhEtot+=esrhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
+        if (del <= 13.5 and samesign(phoeta,esrheta)) esrhEtot+=esrhE->at(j); //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
       }
     }
     TotalVec.push_back(esrhEtot);
@@ -274,7 +274,7 @@ bool near_object(float rhx, float rhy, float rheta, vector<float>* obPhi, vector
       delx = fabs(obx-rhx);
       dely = fabs(oby-rhy);
       del = sqrt(pow(delx,2)+pow(dely,2));
-      if (del <=rad and check_samesign_eta(obeta,rheta) and fabs(obeta) > 1.65) near = true;
+      if (del <=rad and samesign(obeta,rheta) and fabs(obeta) > 1.65) near = true;
     }
   return near;
 }
@@ -334,7 +334,7 @@ vector<int> hbherhReg(float phoSCPhi, float phoSCEta, vector<float>* hbherhE, ve
   float dphi;
   float dx;
   float dy;
-  float phoSCR = fabs(ecal_z/sinh(phoSCEta));
+  float phoSCR = ecal_z/fabs(sinh(phoSCEta));
   float phox = phoSCR*cos(phoSCPhi);
   float phoy = phoSCR*sin(phoSCPhi);
   float drho;
@@ -344,7 +344,7 @@ vector<int> hbherhReg(float phoSCPhi, float phoSCEta, vector<float>* hbherhE, ve
   vector<int> Reg;
   for(int i = 0; i < nhbherh; i++) {
     hbherhR = sqrt(pow(hbherhX->at(i),2)+pow(hbherhY->at(i),2));
-    if (not check_samesign_eta(phoSCEta,hbherhZ->at(i))) {
+    if (not samesign(phoSCEta,hbherhEta->at(i)) or fabs(phoSCEta)<1.65 or fabs(phoSCEta)>1.8) {
       Reg.push_back(0);
       continue;
     }
@@ -367,10 +367,10 @@ vector<float> E1A1E2A2(float phoSCPhi, float phoSCEta, vector<float>* hbherhE, v
   for (int i = 0; i < Reg.size(); i++) {
     reg_check += Reg[i];
   }
-  if (reg_check == 0) return {-1,-1,-1,-1};  
+  if (reg_check == 0 or fabs(phoSCEta) < 1.65 or fabs(phoSCEta) > 1.8) return {-4,-4,-4,-4}; //temporary, but keep this restriction for barrel photons.
   vector<float> EA1EA2;
   float ecal_z = 319.5;
-  float phoSCR = fabs(ecal_z/sinh(phoSCEta));
+  float phoSCR = ecal_z/fabs(sinh(phoSCEta));
   float phoX = phoSCR*cos(phoSCPhi);
   float phoY = phoSCR*sin(phoSCPhi);
   float phoZ = ecal_z;
@@ -384,6 +384,8 @@ vector<float> E1A1E2A2(float phoSCPhi, float phoSCEta, vector<float>* hbherhE, v
   float EY2 = 0;
   float EZ1 = 0;
   float EZ2 = 0;
+  float A1;
+  float A2;
   int reg;
   for(int i = 0; i < nhbherh; i++) {
     reg = Reg[i];
@@ -403,20 +405,30 @@ vector<float> E1A1E2A2(float phoSCPhi, float phoSCEta, vector<float>* hbherhE, v
       EZ2 += E*hbherhZ->at(i);
     }
   }
-  float avx1 = EX1/E1;
-  float avy1 = EY1/E1;
-  float avz1 = EZ1/E1;
-  float avx2 = EX2/E2;
-  float avy2 = EY2/E2;
-  float avz2 = EZ2/E2;
-  float avr1 = sqrt(pow(avx1,2)+pow(avy1,2));
-  float avr2 = sqrt(pow(avx2,2)+pow(avy2,2));
-  float dr1 = avr1-phoSCR;
-  float dz1 = fabs(avz1-phoZ);
-  float A1 = atan2(dr1,dz1);
-  float dr2 = avr2-phoSCR;
-  float dz2 = fabs(avz2-phoZ);
-  float A2 = atan2(dr2,dz2);
+  if (E1 > 0) {
+    float avx1 = EX1/E1;
+    float avy1 = EY1/E1;
+    float avr1 = sqrt(pow(avx1,2)+pow(avy1,2));
+    float dr1 = avr1-phoSCR;
+    float avz1 = EZ1/E1;
+    float dz1 = fabs(avz1)-phoZ;
+    A1 = atan2(dr1,dz1);
+  }
+  else {
+    A1 = -4;
+  }
+  if (E2 > 0) {
+    float avx2 = EX2/E2;
+    float avy2 = EY2/E2;
+    float avr2 = sqrt(pow(avx2,2)+pow(avy2,2));
+    float avz2 = EZ2/E2;
+    float dr2 = avr2-phoSCR;
+    float dz2 = fabs(avz2-phoZ);
+    A2 = atan2(dr2,dz2);
+  }
+  else {
+    A2 = -4;
+  }
   EA1EA2.push_back(E1);
   EA1EA2.push_back(A1);
   EA1EA2.push_back(E2);
@@ -426,10 +438,10 @@ vector<float> E1A1E2A2(float phoSCPhi, float phoSCEta, vector<float>* hbherhE, v
 
 float phoEnWeAn(vector<float> EA12) {
   float E1 = EA12[0];
-  if (E1 < 0) return -3.1415;
   float A1 = EA12[1];
   float E2 = EA12[2];
   float A2 = EA12[3];
+  if (E1 < 0) return 4;
   float enwean = (A1*E1+A2*E2)/(E1+E2);
   return enwean;
 }
@@ -438,14 +450,13 @@ vector<int> esrhReg(float phoSCPhi, float phoSCEta, vector<float>* esrhE, vector
   float pi = 3.14159265358979323846;
   float ecal_z = 319.5;
   int nesrh = esrhE->size();
-  //float dphi;
   float dx;
   float dy;
   float dfx1;
   float dfy1;
   float dfx2;
   float dfy2;
-  float phoSCR = fabs(ecal_z/sinh(phoSCEta));
+  float phoSCR = ecal_z/fabs(sinh(phoSCEta));
   float phox = phoSCR*cos(phoSCPhi);
   float phoy = phoSCR*sin(phoSCPhi);
   float fauSCR1 = phoSCR-10.65/sinh(fabs(phoSCEta));
@@ -458,16 +469,12 @@ vector<int> esrhReg(float phoSCPhi, float phoSCEta, vector<float>* esrhE, vector
   float drho1;
   float drho2;
   int reg;
-  int esrhR;
   vector<int> Reg;
   for(int i = 0; i < nesrh; i++) {
-    esrhR = sqrt(pow(esrhX->at(i),2)+pow(esrhY->at(i),2));
-    if (not check_samesign_eta(phoSCEta,esrhZ->at(i))) {
+    if (fabs(phoSCEta) < 1.65 or not samesign(phoSCEta,esrhZ->at(i))) {
       Reg.push_back(0);
       continue;
     }
-    //dphi = fabs(esrhPhi->at(i)-phoSCPhi);
-    //if (dphi > pi) dphi = 2*pi - dphi;
     dx = fabs(esrhX->at(i)-phox);
     dy = fabs(esrhY->at(i)-phoy);
     dfx1 = fabs(esrhX->at(i)-faux1);
@@ -478,8 +485,8 @@ vector<int> esrhReg(float phoSCPhi, float phoSCEta, vector<float>* esrhE, vector
     drho1 = sqrt(pow(dfx1,2)+pow(dfy1,2));
     drho2 = sqrt(pow(dfx2,2)+pow(dfy2,2));
     reg = 0;
-    if (drho < 13.5) reg += 1;
-    if ((drho1 <= 13.5 and esrhPlane->at(i)==1) or (drho2 <= 13.5 and esrhPlane->at(i)==2)) reg += 2;
+    if (drho < 13.5) reg += 2;
+    if ((drho1 <= 13.5 and esrhPlane->at(i)==1) or (drho2 <= 13.5 and esrhPlane->at(i)==2)) reg += 1;
     Reg.push_back(reg);
   }
   return Reg;
@@ -490,10 +497,10 @@ vector<float> preE1A1E2A2(float phoSCPhi, float phoSCEta, vector<float>* esrhE, 
   for (int i = 0; i < Reg.size(); i++) {
     reg_check += Reg[i];
   }
-  if (reg_check == 0) return {-1,-1,-1,-1};  
+  if (reg_check == 0 or fabs(phoSCEta) < 1.65 or fabs(phoSCEta) > 1.8) return {-4,-4,-4,-4}; //temporary, but keep this restriction for barrel photons.
   vector<float> EA1EA2;
   float ecal_z = 319.5;
-  float phoSCR = fabs(ecal_z/sinh(phoSCEta));
+  float phoSCR = ecal_z/fabs(sinh(phoSCEta));
   float phoX = phoSCR*cos(phoSCPhi);
   float phoY = phoSCR*sin(phoSCPhi);
   float phoZ = ecal_z;
@@ -507,6 +514,8 @@ vector<float> preE1A1E2A2(float phoSCPhi, float phoSCEta, vector<float>* esrhE, 
   float EY2 = 0;
   float EZ1 = 0;
   float EZ2 = 0;
+  float A1;
+  float A2;
   int reg;
   for(int i = 0; i < nesrh; i++) {
     reg = Reg[i];
@@ -526,20 +535,30 @@ vector<float> preE1A1E2A2(float phoSCPhi, float phoSCEta, vector<float>* esrhE, 
       EZ2 += E*esrhZ->at(i);
     }
   }
-  float avx1 = EX1/E1;
-  float avy1 = EY1/E1;
-  float avz1 = EZ1/E1;
-  float avx2 = EX2/E2;
-  float avy2 = EY2/E2;
-  float avz2 = EZ2/E2;
-  float avr1 = sqrt(pow(avx1,2)+pow(avy1,2));
-  float avr2 = sqrt(pow(avx2,2)+pow(avy2,2));
-  float dr1 = phoSCR-avr1;
-  float dz1 = fabs(avz1-phoZ);
-  float A1 = atan2(dr1,dz1);
-  float dr2 = phoSCR-avr2;
-  float dz2 = fabs(avz2-phoZ);
-  float A2 = atan2(dr2,dz2);
+  if (E1 > 0) {
+    float avx1 = EX1/E1;
+    float avy1 = EY1/E1;
+    float avr1 = sqrt(pow(avx1,2)+pow(avy1,2));
+    float dr1 = phoSCR-avr1;
+    float avz1 = EZ1/E1;
+    float dz1 = fabs(avz1-phoZ);
+    A1 = atan2(dr1,dz1);
+  }
+  else {
+    A1 = -4;
+  }
+  if (E2 > 0) {
+    float avx2 = EX2/E2;
+    float avy2 = EY2/E2;
+    float avr2 = sqrt(pow(avx2,2)+pow(avy2,2));
+    float dr2 = phoSCR-avr2;
+    float avz2 = EZ2/E2;
+    float dz2 = fabs(avz2-phoZ);
+    A2 = atan2(dr2,dz2);
+  }
+  else {
+    A2 = -4;
+  }
   EA1EA2.push_back(E1);
   EA1EA2.push_back(A1);
   EA1EA2.push_back(E2);
@@ -694,7 +713,7 @@ int main(int argc, char** argv) {
       phoNumESRHnew.push_back(get_close_phi_esrh(phoPhi->at(j),esrhPhi,esrhEta));
       phoNumESRHzsidenew.push_back(get_close_phi_esrhzside(phoPhi->at(j),phoEta->at(j),esrhPhi,esrhEta));
       vector<int> heReg = hbherhReg(phoSCPhi->at(j), phoSCEta->at(j), hbherhE, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhEta);
-      vector<int> preReg = esrhReg(phoSCPhi->at(j), phoSCEta->at(j), esrhE, esrhX, esrhY, esrhZ, esrhPhi, esrhEta);
+      vector<int> preReg = esrhReg(phoSCPhi->at(j), phoSCEta->at(j), esrhE, esrhX, esrhY, esrhZ, esrhPhi, esrhPlane);
       vector<float> EA12 = E1A1E2A2(phoSCPhi->at(j), phoSCEta->at(j), hbherhE, hbherhX, hbherhY, hbherhZ, heReg);
       vector<float> preEA12 = preE1A1E2A2(phoSCPhi->at(j), phoSCEta->at(j), esrhE, esrhX, esrhY, esrhZ, preReg);
       phoE1new.push_back(EA12[0]);
