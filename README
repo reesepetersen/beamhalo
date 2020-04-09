@@ -19,25 +19,21 @@ tmcut_data_B/run_tmmain-B-anTGCtree_data.root
 tmcut_data_C/run_tmmain-C-anTGCtree_data.root
 tmcut_data_D/run_tmmain-D-anTGCtree_data.root
 tmcut_data_E/run_tmmain-E-anTGCtree_data.root
-tmcut_data_F1/run_tmmain-F1-anTGCtree_data.root
-tmcut_data_F2/run_tmmain-F2-anTGCtree_data.root
-tmcut_data_F30/run_tmmain-F30-anTGCtree_data.root
-tmcut_data_F31/run_tmmain-F31-anTGCtree_data.root
 tmcut_data_F40/run_tmmain-F40-anTGCtree_data.root
 tmcut_data_F41/run_tmmain-F41-anTGCtree_data.root
-Next, these files were each processed with promptmain, promptbarrelmain, beamhalomain, and beamhalobarrelmain,
-which were compiled from promptcut.cpp, promptbarrelcut.cpp, beamhalocut.cpp, and beamhalobarrelcut.cpp.
-As of Dec 13, 2019, promptbarrelcut.cpp and beamhalobarrelcut.cpp have not been updated in while and are obsolete.
-The results of this processing are on gitlab:
-https://gitlab.com/reesepetersen/atgc_reese
+
+To extract high-purity beam halo-faked photons from data, compile purehalo.cpp and run the executable on each of the files above.
+purehalo.cpp selection criteria:
+
+This results in about 2000 events.
 
 The file train.py was originally derived from a BDT which Mohammed shared with me.
 To run train.py do:
-cmsrel CMSSW_9_4_3
-cd CMSSW_9_4_3/src
+cmsrel CMSSW_9_4_16_UL
+cd CMSSW_9_4_16_UL/src
 cmsenv
-git clone https://gitlab.com/reesepetersen/atgc_reese.git
-cd atgc_reese
+git clone https://gitlab.com/reesepetersen/beamhalo.git
+cd beamhalo
 ./train.py root_file_list.txt
 
 For MC:
@@ -48,3 +44,11 @@ These root files were all processed by:
 1. tmcut.cpp
 2. promptMCcut.cpp
 The result is called anTGCtree_MC_prompt.root
+
+Next steps:
+1. Verify the performance of phoEnWeAn variables in add_features.cpp
+2. Compare high-purity beam halo with MC beam halo in all features.
+3. Add all new features to the BDT.
+4. Train and test BDT.
+5. Present results.
+3. 

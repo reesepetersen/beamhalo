@@ -355,7 +355,7 @@ vector<int> hbherhReg(float phoSCPhi, float phoSCEta, vector<float>* hbherhE, ve
     drho = sqrt(pow(dx,2)+pow(dy,2));
     deta = fabs(hbherhEta->at(i)-phoSCEta);
     dR = sqrt(pow(dphi,2)+pow(deta,2));
-    if (dphi < 0.3 and drho < 26) Reg.push_back(2);
+    if (dphi < 0.15 and drho < 26) Reg.push_back(2);
     else if (dR <= 0.15) Reg.push_back(1);
     else Reg.push_back(0);
   }

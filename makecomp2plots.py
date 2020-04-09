@@ -226,7 +226,7 @@ phoPreA2_d = {
 phoPreE1_d = {
     "name":"phoPreE1",
     "low":0,
-    "high":100,
+    "high":10,
     "units":"Region 1 Energy",
     "position":18,
     "yscale":"log",
@@ -234,7 +234,7 @@ phoPreE1_d = {
 phoPreE2_d = {
     "name":"phoPreE2",
     "low":0,
-    "high":100,
+    "high":10,
     "units":"Region 2 Energy",
     "position":19,
     "yscale":"log",
@@ -450,6 +450,8 @@ def get_color(filestring):
       return r.kBlue
   elif 'beamhalo' in filestring and 'MC' in filestring:
     return r.kViolet
+  elif 'newbh' in filestring and 'MC' in filestring:
+    return r.kBlue
   elif 'tmne' in filestring and 'data' in filestring:
     return r.kAzure+1
   elif 'tmn' in filestring and 'MC' in filestring:
