@@ -47,6 +47,7 @@ The result is called anTGCtree_MC_prompt.root
 
 Next steps:
 1. Verify the performance of phoEnWeAn variables in add_features.cpp
+1.5. How do I make this an apples to apples comparison? Same selections? MC BH vs Data BH, MC BH vs MC Photon.
 2. Compare high-purity beam halo with MC beam halo in all features.
 3. Add all new features to the BDT.
 4. Train and test BDT.

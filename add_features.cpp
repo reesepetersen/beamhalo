@@ -344,7 +344,7 @@ vector<int> hbherhReg(float phoSCPhi, float phoSCEta, vector<float>* hbherhE, ve
   vector<int> Reg;
   for(int i = 0; i < nhbherh; i++) {
     hbherhR = sqrt(pow(hbherhX->at(i),2)+pow(hbherhY->at(i),2));
-    if (not samesign(phoSCEta,hbherhEta->at(i)) or fabs(phoSCEta)<1.65 or fabs(phoSCEta)>1.8) {
+    if (not samesign(phoSCEta,hbherhEta->at(i)) or fabs(phoSCEta)<1.65 or fabs(phoSCEta)>1.8) {//eta restriction to be removed after testing
       Reg.push_back(0);
       continue;
     }
