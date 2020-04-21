@@ -202,23 +202,23 @@ phoE2_d = {
 phoPreEnWeAn_d = {
     "name":"phoPreEnWeAn",
     "low":-1,
-    "high":1,
+    "high":1.5,
     "units":"Energy-weighted Angle",
     "position":15,
     "yscale":"log",
     "nbins":100}
 phoPreA1_d = {
     "name":"phoPreA1",
-    "low":-0.9,
-    "high":1,
+    "low":-1,
+    "high":1.5,
     "units":"Region 1 Angle",
     "position":16,
     "yscale":"log",
     "nbins":100}
 phoPreA2_d = {
     "name":"phoPreA2",
-    "low":-0.9,
-    "high":1,
+    "low":-1,
+    "high":1.5,
     "units":"Region 2 Angle",
     "position":17,
     "yscale":"log",
@@ -226,7 +226,7 @@ phoPreA2_d = {
 phoPreE1_d = {
     "name":"phoPreE1",
     "low":0,
-    "high":10,
+    "high":3,
     "units":"Region 1 Energy",
     "position":18,
     "yscale":"log",
@@ -234,7 +234,7 @@ phoPreE1_d = {
 phoPreE2_d = {
     "name":"phoPreE2",
     "low":0,
-    "high":10,
+    "high":3,
     "units":"Region 2 Energy",
     "position":19,
     "yscale":"log",
@@ -255,11 +255,11 @@ var_od = OrderedDict()
 #var_od['phoEt'] = phoEt_d
 #var_od['phoHaloHE'] = phoHaloHE_d
 #var_od['phoHaloPre'] = phoHaloPre_d
-var_od['phoEnWeAn'] = phoEnWeAn_d
-var_od['phoE1'] = phoE1_d
-var_od['phoE2'] = phoE2_d
-var_od['phoA1'] = phoA1_d
-var_od['phoA2'] = phoA2_d
+#var_od['phoEnWeAn'] = phoEnWeAn_d
+#var_od['phoE1'] = phoE1_d
+#var_od['phoE2'] = phoE2_d
+#var_od['phoA1'] = phoA1_d
+#var_od['phoA2'] = phoA2_d
 var_od['phoPreEnWeAn'] = phoPreEnWeAn_d
 var_od['phoPreE1'] = phoPreE1_d
 var_od['phoPreE2'] = phoPreE2_d

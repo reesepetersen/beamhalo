@@ -44,12 +44,12 @@ print('Signal list: ', signal_list)
 bg_list = [line.rstrip('\n') for line in open(listfile) if 'prompt' in line]
 print('Background list: ', bg_list)
 
-#feature_names = ['phoR9','phoSigmaIEtaIEtaFull5x5','phoSigmaIEtaIPhiFull5x5','phoSigmaIPhiIPhiFull5x5','phoHoverE','phoSeedTime','phoNumHERHzside','phoNumESRHzside','phoSCEtaWidth','phoSCPhiWidth']
-#feature_symbols = ['R9',r'$\sigma_{i\eta i\eta}$',r'$\sigma_{i\eta i\phi}$',r'$\sigma_{i\phi i\phi}$','H/E','Seed Time','num HERH zside','num ESRH zside',r'SC $\eta$ width',r'SC $\phi$ width']
-#feature_names = ['phoR9','phoSigmaIEtaIEtaFull5x5','phoSigmaIEtaIPhiFull5x5','phoSigmaIPhiIPhiFull5x5','phoHoverE','phoNumHERH','phoNumESRH','phoSCEtaWidth','phoSCPhiWidth']
+feature_names = ['phoR9','phoSigmaIEtaIEtaFull5x5','phoSigmaIEtaIPhiFull5x5','phoSigmaIPhiIPhiFull5x5','phoHoverE','phoSeedTime','phoEnWeAn','phoPreEnWeAn','phoSCEtaWidth','phoSCPhiWidth']
+feature_symbols = ['R9',r'$\sigma_{i\eta i\eta}$',r'$\sigma_{i\eta i\phi}$',r'$\sigma_{i\phi i\phi}$','H/E','Seed Time','HE energy-weighted angle','ES energy-weighted angle',r'SC $\eta$ width',r'SC $\phi$ width']
+#feature_names = ['phoR9','phoSigmaIEtaIEtaFull5x5','phoSigmaIEtaIPhiFull5x5','phoSigmaIPhiIPhiFull5x5','phoHoverE','phoNumHERH','phoNumESRH','phoSCEtaWidth','phoSCPhiWidth']`
 #feature_symbols = ['R9',r'$\sigma_{i\eta i\eta}$',r'$\sigma_{i\eta i\phi}$',r'$\sigma_{i\phi i\phi}$','H/E','num HERH','num ESRH',r'SC $\eta$ width',r'SC $\phi$ width']
-feature_names = ['phoR9','phoSigmaIEtaIEtaFull5x5','phoSigmaIEtaIPhiFull5x5','phoSigmaIPhiIPhiFull5x5','phoHoverE','phoSCEtaWidth','phoSCPhiWidth']
-feature_symbols = ['R9',r'$\sigma_{i\eta i\eta}$',r'$\sigma_{i\eta i\phi}$',r'$\sigma_{i\phi i\phi}$','H/E',r'SC $\eta$ width',r'SC $\phi$ width']
+#feature_names = ['phoR9','phoSigmaIEtaIEtaFull5x5','phoSigmaIEtaIPhiFull5x5','phoSigmaIPhiIPhiFull5x5','phoHoverE','phoSCEtaWidth','phoSCPhiWidth']
+#feature_symbols = ['R9',r'$\sigma_{i\eta i\eta}$',r'$\sigma_{i\eta i\phi}$',r'$\sigma_{i\phi i\phi}$','H/E',r'SC $\eta$ width',r'SC $\phi$ width']
 #feature_names = ['phoR9','phoSigmaIEtaIEtaFull5x5','phoSigmaIEtaIPhiFull5x5','phoSigmaIPhiIPhiFull5x5','phoNumHERH','phoSCEtaWidth','phoSCPhiWidth','phoSeedTime']
 #feature_symbols = ['R9',r'$\sigma_{i\eta i\eta}$',r'$\sigma_{i\eta i\phi}$',r'$\sigma_{i\phi i\phi}$','num HERH',r'SC $\eta$ width',r'SC $\phi$ width','Seed Time']
 feature_dict = {}
@@ -78,6 +78,8 @@ for event in sigFeat:
     for feature in event:
       new_event.append(feature[0])
     sigList.append(tuple(new_event))
+  elif len(event[0]) == 0:
+    print event
   else:
     temp_list = []
     for feature in event:

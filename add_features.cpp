@@ -54,59 +54,59 @@ bool samesign(float thing1, float thing2) {
   else return false;
 }
 
-int get_close_phi_herh(float phoPhi,vector<float> *hbherhPhi,vector<float> *hbherhEta) {
-  int herh_count = 0;
-  float delphi;
-  float pi = 3.1415926535897932;
-  for (int i = 0; i < hbherhPhi->size(); i++) {
-    if (fabs(hbherhEta->at(i)) < 1.566) continue;//only look at HE hits, not HB hits
-    delphi = fabs(hbherhPhi->at(i)-phoPhi);
-    if (delphi > pi) delphi = 2*pi - delphi;
-    if (delphi < 0.09) herh_count++; //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
-  }
-  return herh_count;
-}
-            
-int get_close_phi_herhzside(float phoPhi, float phoEta, vector<float> *hbherhPhi, vector<float> *hbherhEta) {
-  int herh_count = 0;
-  float delphi;
-  float pi = 3.1415926535897932;
-  for (int i = 0; i < hbherhPhi->size(); i++) {
-    if (fabs(hbherhEta->at(i)) < 1.566) continue;//only look at HE hits, not HB hits
-    delphi = fabs(hbherhPhi->at(i)-phoPhi);
-    if (delphi > pi) delphi = 2*pi - delphi;
-    bool samesign_eta = samesign(phoEta,hbherhEta->at(i));
-    if (delphi < 0.09 && samesign_eta) herh_count++; //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
-  }
-  return herh_count;
-}
-            
-int get_close_phi_esrh(float phoPhi,vector<float> *esrhPhi,vector<float> *esrhEta) {
-  int esrh_count = 0;
-  float delphi;
-  float pi = 3.1415926535897932;
-  for (int i = 0; i < esrhPhi->size(); i++) {
-    if (fabs(esrhEta->at(i)) < 1.566) continue;//only look at HE hits, not HB hits
-    delphi = fabs(esrhPhi->at(i)-phoPhi);
-    if (delphi > pi) delphi = 2*pi - delphi;
-    if (delphi < 0.09) esrh_count++; //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
-  }
-  return esrh_count;
-}
-
-int get_close_phi_esrhzside(float phoPhi, float phoEta, vector<float> *esrhPhi,vector<float> *esrhEta) {
-  int esrh_count = 0;
-  float delphi;
-  float pi = 3.1415926535897932;
-  for (int i = 0; i < esrhPhi->size(); i++) {
-    if (fabs(esrhEta->at(i)) < 1.566) continue;//only look at HE hits, not HB hits
-    delphi = fabs(esrhPhi->at(i)-phoPhi);
-    if (delphi > pi) delphi = 2*pi - delphi;
-    bool samesign_eta = samesign(phoEta,esrhEta->at(i));
-    if (delphi < 0.09 && samesign_eta) esrh_count++; //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
-  }
-  return esrh_count;
-}
+//int get_close_phi_herh(float phoPhi,vector<float> *hbherhPhi,vector<float> *hbherhEta) {
+//  int herh_count = 0;
+//  float delphi;
+//  float pi = 3.1415926535897932;
+//  for (int i = 0; i < hbherhPhi->size(); i++) {
+//    if (fabs(hbherhEta->at(i)) < 1.566) continue;//only look at HE hits, not HB hits
+//    delphi = fabs(hbherhPhi->at(i)-phoPhi);
+//    if (delphi > pi) delphi = 2*pi - delphi;
+//    if (delphi < 0.09) herh_count++; //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
+//  }
+//  return herh_count;
+//}
+//            
+//int get_close_phi_herhzside(float phoPhi, float phoEta, vector<float> *hbherhPhi, vector<float> *hbherhEta) {
+//  int herh_count = 0;
+//  float delphi;
+//  float pi = 3.1415926535897932;
+//  for (int i = 0; i < hbherhPhi->size(); i++) {
+//    if (fabs(hbherhEta->at(i)) < 1.566) continue;//only look at HE hits, not HB hits
+//    delphi = fabs(hbherhPhi->at(i)-phoPhi);
+//    if (delphi > pi) delphi = 2*pi - delphi;
+//    bool samesign_eta = samesign(phoEta,hbherhEta->at(i));
+//    if (delphi < 0.09 && samesign_eta) herh_count++; //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
+//  }
+//  return herh_count;
+//}
+//            
+//int get_close_phi_esrh(float phoPhi,vector<float> *esrhPhi,vector<float> *esrhEta) {
+//  int esrh_count = 0;
+//  float delphi;
+//  float pi = 3.1415926535897932;
+//  for (int i = 0; i < esrhPhi->size(); i++) {
+//    if (fabs(esrhEta->at(i)) < 1.566) continue;//only look at HE hits, not HB hits
+//    delphi = fabs(esrhPhi->at(i)-phoPhi);
+//    if (delphi > pi) delphi = 2*pi - delphi;
+//    if (delphi < 0.09) esrh_count++; //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
+//  }
+//  return esrh_count;
+//}
+//
+//int get_close_phi_esrhzside(float phoPhi, float phoEta, vector<float> *esrhPhi,vector<float> *esrhEta) {
+//  int esrh_count = 0;
+//  float delphi;
+//  float pi = 3.1415926535897932;
+//  for (int i = 0; i < esrhPhi->size(); i++) {
+//    if (fabs(esrhEta->at(i)) < 1.566) continue;//only look at HE hits, not HB hits
+//    delphi = fabs(esrhPhi->at(i)-phoPhi);
+//    if (delphi > pi) delphi = 2*pi - delphi;
+//    bool samesign_eta = samesign(phoEta,esrhEta->at(i));
+//    if (delphi < 0.09 && samesign_eta) esrh_count++; //0.09 radians is just over 5 degrees. Most HE segements cover 10 degrees in phi
+//  }
+//  return esrh_count;
+//}
 
 vector<float> phoAHETotal(vector<float> *esrhX, vector<float> *esrhY, vector<float> *esrhZ, vector<float> *esrhPhi, vector<float> *esrhE, vector<float> *esrhEta, vector<float> *hbherhX, vector<float> *hbherhY, vector<float> *hbherhZ, vector<float> *hbherhPhi, vector<float> *hbherhE, vector<float> *hbherhEta, vector<float> *phoEta, vector<float> *phoPhi) {
   vector<float> TotalVec;
@@ -279,53 +279,53 @@ bool near_object(float rhx, float rhy, float rheta, vector<float>* obPhi, vector
   return near;
 }
 
-vector<int> esrhHaloPreID(vector<float> *esrhX, vector<float> *esrhY, vector<float> *esrhZ, vector<float> *esrhPhi, vector<float> *esrhE, vector<float> *esrhEta, vector<float> *hbherhX, vector<float> *hbherhY, vector<float> *hbherhZ, vector<float> *hbherhPhi, vector<float> *hbherhE, vector<float> *hbherhEta, vector<float> *phoEta, vector<float> *phoPhi, vector<float> *eleEta, vector<float> *elePhi, vector<float> *AK4CHSJet_Eta, vector<float> *AK4CHSJet_Phi, vector<float> *muEta, vector<float> *muPhi) {
-  vector<int> esrhIDvec;
-  float ecal_z = 319.5;//cm
-  float rad = 13.5;//cm
-  float esrhR;
-  float esrhphi;
-  float esrheta;
-  float esrhx;
-  float esrhy;
-  int nesrh = esrhE->size();
-  int id;
-  for (int j = 0; j < nesrh; j++) {//esrh loop
-    esrheta = esrhEta->at(j);
-    esrhx = esrhX->at(j);
-    esrhy = esrhY->at(j);
-    id = 0;
-    if (near_object(esrhx,esrhy,esrheta,phoPhi,phoEta,ecal_z,rad)) id+=1;//near a photon
-    if (near_object(esrhx,esrhy,esrheta,elePhi,eleEta,ecal_z,rad)) id+=2;//near a electron
-    if (near_object(esrhx,esrhy,esrheta,muPhi,muEta,ecal_z,rad)) id+=4;//near a muon
-    esrhIDvec.push_back(id);
-  }
-  return esrhIDvec;
-}
-
-vector<int> herhHaloHEID(vector<float> *esrhX, vector<float> *esrhY, vector<float> *esrhZ, vector<float> *esrhPhi, vector<float> *esrhE, vector<float> *esrhEta, vector<float> *hbherhX, vector<float> *hbherhY, vector<float> *hbherhZ, vector<float> *hbherhPhi, vector<float> *hbherhE, vector<float> *hbherhEta, vector<float> *phoEta, vector<float> *phoPhi, vector<float> *eleEta, vector<float> *elePhi, vector<float> *AK4CHSJet_Eta, vector<float> *AK4CHSJet_Phi, vector<float> *muEta, vector<float> *muPhi) {
-  vector<int> hbherhIDvec;
-  float ecal_z = 319.5;//cm
-  float rad = 25;//cm
-  float hbherhR;
-  float hbherhphi;
-  float hbherheta;
-  float hbherhx;
-  float hbherhy;
-  int nhbherh = hbherhE->size();
-  int id;
-  for (int j = 0; j < nhbherh; j++) {//herh loop
-    hbherheta = hbherhEta->at(j);
-    hbherhx = hbherhX->at(j);
-    hbherhy = hbherhY->at(j);
-    id = 0;
-    if (near_object(hbherhx,hbherhy,hbherheta,phoPhi,phoEta,ecal_z,rad)) id+=1;//near a photon
-    if (near_object(hbherhx,hbherhy,hbherheta,elePhi,eleEta,ecal_z,rad)) id+=2;//near a electron
-    if (near_object(hbherhx,hbherhy,hbherheta,muPhi,muEta,ecal_z,rad)) id+=4;//near a muon
-    hbherhIDvec.push_back(id);
-  }
-  return hbherhIDvec;
-}
+//vector<int> esrhHaloPreID(vector<float> *esrhX, vector<float> *esrhY, vector<float> *esrhZ, vector<float> *esrhPhi, vector<float> *esrhE, vector<float> *esrhEta, vector<float> *hbherhX, vector<float> *hbherhY, vector<float> *hbherhZ, vector<float> *hbherhPhi, vector<float> *hbherhE, vector<float> *hbherhEta, vector<float> *phoEta, vector<float> *phoPhi, vector<float> *eleEta, vector<float> *elePhi, vector<float> *AK4CHSJet_Eta, vector<float> *AK4CHSJet_Phi, vector<float> *muEta, vector<float> *muPhi) {
+//  vector<int> esrhIDvec;
+//  float ecal_z = 319.5;//cm
+//  float rad = 13.5;//cm
+//  float esrhR;
+//  float esrhphi;
+//  float esrheta;
+//  float esrhx;
+//  float esrhy;
+//  int nesrh = esrhE->size();
+//  int id;
+//  for (int j = 0; j < nesrh; j++) {//esrh loop
+//    esrheta = esrhEta->at(j);
+//    esrhx = esrhX->at(j);
+//    esrhy = esrhY->at(j);
+//    id = 0;
+//    if (near_object(esrhx,esrhy,esrheta,phoPhi,phoEta,ecal_z,rad)) id+=1;//near a photon
+//    if (near_object(esrhx,esrhy,esrheta,elePhi,eleEta,ecal_z,rad)) id+=2;//near a electron
+//    if (near_object(esrhx,esrhy,esrheta,muPhi,muEta,ecal_z,rad)) id+=4;//near a muon
+//    esrhIDvec.push_back(id);
+//  }
+//  return esrhIDvec;
+//}
+//
+//vector<int> herhHaloHEID(vector<float> *esrhX, vector<float> *esrhY, vector<float> *esrhZ, vector<float> *esrhPhi, vector<float> *esrhE, vector<float> *esrhEta, vector<float> *hbherhX, vector<float> *hbherhY, vector<float> *hbherhZ, vector<float> *hbherhPhi, vector<float> *hbherhE, vector<float> *hbherhEta, vector<float> *phoEta, vector<float> *phoPhi, vector<float> *eleEta, vector<float> *elePhi, vector<float> *AK4CHSJet_Eta, vector<float> *AK4CHSJet_Phi, vector<float> *muEta, vector<float> *muPhi) {
+//  vector<int> hbherhIDvec;
+//  float ecal_z = 319.5;//cm
+//  float rad = 25;//cm
+//  float hbherhR;
+//  float hbherhphi;
+//  float hbherheta;
+//  float hbherhx;
+//  float hbherhy;
+//  int nhbherh = hbherhE->size();
+//  int id;
+//  for (int j = 0; j < nhbherh; j++) {//herh loop
+//    hbherheta = hbherhEta->at(j);
+//    hbherhx = hbherhX->at(j);
+//    hbherhy = hbherhY->at(j);
+//    id = 0;
+//    if (near_object(hbherhx,hbherhy,hbherheta,phoPhi,phoEta,ecal_z,rad)) id+=1;//near a photon
+//    if (near_object(hbherhx,hbherhy,hbherheta,elePhi,eleEta,ecal_z,rad)) id+=2;//near a electron
+//    if (near_object(hbherhx,hbherhy,hbherheta,muPhi,muEta,ecal_z,rad)) id+=4;//near a muon
+//    hbherhIDvec.push_back(id);
+//  }
+//  return hbherhIDvec;
+//}
 
 vector<int> hbherhReg(float phoSCPhi, float phoSCEta, vector<float>* hbherhE, vector<float>* hbherhX, vector<float>* hbherhY, vector<float>* hbherhZ, vector<float>* hbherhPhi, vector<float>* hbherhEta) {
   float pi = 3.14159265358979323846;
@@ -459,8 +459,19 @@ vector<int> esrhReg(float phoSCPhi, float phoSCEta, vector<float>* esrhE, vector
   float phoSCR = ecal_z/fabs(sinh(phoSCEta));
   float phox = phoSCR*cos(phoSCPhi);
   float phoy = phoSCR*sin(phoSCPhi);
-  float fauSCR1 = phoSCR-10.65/sinh(fabs(phoSCEta));
-  float fauSCR2 = phoSCR-15.3/sinh(fabs(phoSCEta));
+  float phoTheta = 2*atan(exp(-phoSCEta));
+  float phoZAngle;
+  if (phoTheta > pi/2) {
+    phoZAngle = pi - phoTheta;
+  }
+  else {
+    phoZAngle = phoTheta;
+  }
+  float halfAngle = phoZAngle/2;
+  float fauSCR1 = phoSCR-15.3/sinh(fabs(phoSCEta));
+  float fauSCR2 = phoSCR-10.65/sinh(fabs(phoSCEta));
+  float halfanR1 = phoSCR-15.3*tan(halfAngle)/2;
+  float halfanR2 = phoSCR-10.65*tan(halfAngle)/2;
   float faux1 = fauSCR1*cos(phoSCPhi);
   float fauy1 = fauSCR1*sin(phoSCPhi);
   float faux2 = fauSCR2*cos(phoSCPhi);
@@ -468,13 +479,15 @@ vector<int> esrhReg(float phoSCPhi, float phoSCEta, vector<float>* esrhE, vector
   float drho;
   float drho1;
   float drho2;
+  float esrhR;
   int reg;
   vector<int> Reg;
   for(int i = 0; i < nesrh; i++) {
-    if (fabs(phoSCEta) < 1.65 or not samesign(phoSCEta,esrhZ->at(i))) {
+    if (fabs(phoSCEta) < 1.65 or fabs(phoSCEta) > 1.8 or not samesign(phoSCEta,esrhZ->at(i))) {
       Reg.push_back(0);
       continue;
     }
+    esrhR = sqrt(pow(esrhX->at(i),2)+pow(esrhY->at(i),2));
     dx = fabs(esrhX->at(i)-phox);
     dy = fabs(esrhY->at(i)-phoy);
     dfx1 = fabs(esrhX->at(i)-faux1);
@@ -485,14 +498,15 @@ vector<int> esrhReg(float phoSCPhi, float phoSCEta, vector<float>* esrhE, vector
     drho1 = sqrt(pow(dfx1,2)+pow(dfy1,2));
     drho2 = sqrt(pow(dfx2,2)+pow(dfy2,2));
     reg = 0;
-    if (drho < 13.5) reg += 2;
-    if ((drho1 <= 13.5 and esrhPlane->at(i)==1) or (drho2 <= 13.5 and esrhPlane->at(i)==2)) reg += 1;
+    if (drho < 13.5 and ((esrhR >= halfanR1 and esrhPlane->at(i) == 1) or (esrhR >= halfanR2 and esrhPlane->at(i) == 2))) reg += 2;
+    if ((drho1 <= 13.5 and esrhR < halfanR1 and esrhPlane->at(i)==1) or (drho2 <= 13.5 and esrhR < halfanR2 and esrhPlane->at(i)==2)) reg += 1;
     Reg.push_back(reg);
   }
   return Reg;
 }
 
 vector<float> preE1A1E2A2(float phoSCPhi, float phoSCEta, vector<float>* esrhE, vector<float>* esrhX, vector<float>* esrhY, vector<float>* esrhZ, vector<int> Reg) {
+  float pi = 3.14159265358979323846;
   int reg_check = 0;
   for (int i = 0; i < Reg.size(); i++) {
     reg_check += Reg[i];
@@ -504,6 +518,12 @@ vector<float> preE1A1E2A2(float phoSCPhi, float phoSCEta, vector<float>* esrhE, 
   float phoX = phoSCR*cos(phoSCPhi);
   float phoY = phoSCR*sin(phoSCPhi);
   float phoZ = ecal_z;
+  float phoTheta = 2*atan(exp(-phoSCEta));
+  float phoZAngle;
+  if (phoTheta > pi/2) {
+    phoZAngle = pi - phoTheta;
+  }
+  float halfAngle = phoZAngle/2;
   int nesrh = esrhE->size();
   float E;
   float E1 = 0;
@@ -520,14 +540,14 @@ vector<float> preE1A1E2A2(float phoSCPhi, float phoSCEta, vector<float>* esrhE, 
   for(int i = 0; i < nesrh; i++) {
     reg = Reg[i];
     if (reg == 0) continue;
-    if (reg == 1 or reg==3) {
+    if (reg == 1) {
       E = esrhE->at(i);
       E1 += E;
       EX1 += E*esrhX->at(i);
       EY1 += E*esrhY->at(i);
       EZ1 += E*esrhZ->at(i);
     }
-    if (reg == 2 or reg==3) {
+    if (reg == 2) {
       E = esrhE->at(i);
       E2 += E;
       EX2 += E*esrhX->at(i);
@@ -541,7 +561,7 @@ vector<float> preE1A1E2A2(float phoSCPhi, float phoSCEta, vector<float>* esrhE, 
     float avr1 = sqrt(pow(avx1,2)+pow(avy1,2));
     float dr1 = phoSCR-avr1;
     float avz1 = EZ1/E1;
-    float dz1 = fabs(avz1-phoZ);
+    float dz1 = phoZ-fabs(avz1);
     A1 = atan2(dr1,dz1);
   }
   else {
@@ -553,7 +573,7 @@ vector<float> preE1A1E2A2(float phoSCPhi, float phoSCEta, vector<float>* esrhE, 
     float avr2 = sqrt(pow(avx2,2)+pow(avy2,2));
     float dr2 = phoSCR-avr2;
     float avz2 = EZ2/E2;
-    float dz2 = fabs(avz2-phoZ);
+    float dz2 = phoZ-fabs(avz2);
     A2 = atan2(dr2,dz2);
   }
   else {
@@ -665,10 +685,10 @@ int main(int argc, char** argv) {
   tree->SetBranchAddress("AK4CHSJet_Phi",&AK4CHSJet_Phi);
   tree->SetBranchAddress("muEta",&muEta);
   tree->SetBranchAddress("muPhi",&muPhi);
-  vector<float> phoNumHERHnew;
-  vector<float> phoNumHERHzsidenew;
-  vector<float> phoNumESRHnew;
-  vector<float> phoNumESRHzsidenew;
+  //vector<float> phoNumHERHnew;
+  //vector<float> phoNumHERHzsidenew;
+  //vector<float> phoNumESRHnew;
+  //vector<float> phoNumESRHzsidenew;
   vector<float> phoAHETotalnew;
   vector<float> phoHaloHEnew;
   vector<float> phoHaloPrenew;
@@ -682,12 +702,12 @@ int main(int argc, char** argv) {
   vector<float> phoPreE2new;
   vector<float> phoPreA2new;
   vector<float> phoPreEnWeAnnew;
-  vector<int> esrhHaloPreIDnew;
-  vector<int> herhHaloHEIDnew;
-  newtree->Branch("phoNumHERH",&phoNumHERHnew);
-  newtree->Branch("phoNumHERHzside",&phoNumHERHzsidenew);
-  newtree->Branch("phoNumESRH",&phoNumESRHnew);
-  newtree->Branch("phoNumESRHzside",&phoNumESRHzsidenew);
+  //vector<int> esrhHaloPreIDnew;
+  //vector<int> herhHaloHEIDnew;
+  //newtree->Branch("phoNumHERH",&phoNumHERHnew);
+  //newtree->Branch("phoNumHERHzside",&phoNumHERHzsidenew);
+  //newtree->Branch("phoNumESRH",&phoNumESRHnew);
+  //newtree->Branch("phoNumESRHzside",&phoNumESRHzsidenew);
   newtree->Branch("phoAHETotal",&phoAHETotalnew);
   newtree->Branch("phoHaloHE",&phoHaloHEnew);
   newtree->Branch("phoHaloPre",&phoHaloPrenew);
@@ -701,17 +721,17 @@ int main(int argc, char** argv) {
   newtree->Branch("phoPreE2",&phoPreE2new);
   newtree->Branch("phoPreA2",&phoPreA2new);
   newtree->Branch("phoPreEnWeAn",&phoPreEnWeAnnew);
-  newtree->Branch("esrhHaloPreID",&esrhHaloPreIDnew);
-  newtree->Branch("herhHaloHEID",&herhHaloHEIDnew);
+  //newtree->Branch("esrhHaloPreID",&esrhHaloPreIDnew);
+  //newtree->Branch("herhHaloHEID",&herhHaloHEIDnew);
   int n = tree->GetEntries();
   float fn = n;
   for (Int_t i=0; i<n; i++) {
     tree->GetEntry(i);
     for (int j=0; j<phoEta->size(); j++) {
-      phoNumHERHnew.push_back(get_close_phi_herh(phoPhi->at(j),hbherhPhi,hbherhEta));
-      phoNumHERHzsidenew.push_back(get_close_phi_herhzside(phoPhi->at(j),phoEta->at(j),hbherhPhi,hbherhEta));
-      phoNumESRHnew.push_back(get_close_phi_esrh(phoPhi->at(j),esrhPhi,esrhEta));
-      phoNumESRHzsidenew.push_back(get_close_phi_esrhzside(phoPhi->at(j),phoEta->at(j),esrhPhi,esrhEta));
+      //phoNumHERHnew.push_back(get_close_phi_herh(phoPhi->at(j),hbherhPhi,hbherhEta));
+      //phoNumHERHzsidenew.push_back(get_close_phi_herhzside(phoPhi->at(j),phoEta->at(j),hbherhPhi,hbherhEta));
+      //phoNumESRHnew.push_back(get_close_phi_esrh(phoPhi->at(j),esrhPhi,esrhEta));
+      //phoNumESRHzsidenew.push_back(get_close_phi_esrhzside(phoPhi->at(j),phoEta->at(j),esrhPhi,esrhEta));
       vector<int> heReg = hbherhReg(phoSCPhi->at(j), phoSCEta->at(j), hbherhE, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhEta);
       vector<int> preReg = esrhReg(phoSCPhi->at(j), phoSCEta->at(j), esrhE, esrhX, esrhY, esrhZ, esrhPhi, esrhPlane);
       vector<float> EA12 = E1A1E2A2(phoSCPhi->at(j), phoSCEta->at(j), hbherhE, hbherhX, hbherhY, hbherhZ, heReg);
@@ -730,13 +750,13 @@ int main(int argc, char** argv) {
     phoAHETotalnew = phoAHETotal(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi);
     phoHaloHEnew = phoHaloHE(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi);
     phoHaloPrenew = phoHaloPre(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi);
-    esrhHaloPreIDnew = esrhHaloPreID(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi, eleEta, elePhi, AK4CHSJet_Eta, AK4CHSJet_Phi, muEta, muPhi);
-    herhHaloHEIDnew = herhHaloHEID(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi, eleEta, elePhi, AK4CHSJet_Eta, AK4CHSJet_Phi, muEta, muPhi);
+    //esrhHaloPreIDnew = esrhHaloPreID(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi, eleEta, elePhi, AK4CHSJet_Eta, AK4CHSJet_Phi, muEta, muPhi);
+    //herhHaloHEIDnew = herhHaloHEID(esrhX, esrhY, esrhZ, esrhPhi, esrhE, esrhEta, hbherhX, hbherhY, hbherhZ, hbherhPhi, hbherhE, hbherhEta, phoEta, phoPhi, eleEta, elePhi, AK4CHSJet_Eta, AK4CHSJet_Phi, muEta, muPhi);
     newtree->Fill();
-    phoNumHERHnew.clear();
-    phoNumHERHzsidenew.clear();
-    phoNumESRHnew.clear();
-    phoNumESRHzsidenew.clear();
+    //phoNumHERHnew.clear();
+    //phoNumHERHzsidenew.clear();
+    //phoNumESRHnew.clear();
+    //phoNumESRHzsidenew.clear();
     phoAHETotalnew.clear();
     phoHaloHEnew.clear();
     phoHaloPrenew.clear();
@@ -750,8 +770,8 @@ int main(int argc, char** argv) {
     phoPreE2new.clear();
     phoPreA2new.clear();
     phoPreEnWeAnnew.clear();
-    esrhHaloPreIDnew.clear();
-    herhHaloHEIDnew.clear();
+    //esrhHaloPreIDnew.clear();
+    //herhHaloHEIDnew.clear();
   }
   newtree->Write();
   fnew.Close();
