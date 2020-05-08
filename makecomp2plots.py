@@ -739,6 +739,35 @@ def xy(dirstring,treename):
   can.Update()
   can.SaveAs(x+'_vs_'+y+'_'+get_barename(get_filestring(dirstring))+'.png')
 
+def polar_phoPhi(dirstring,treename):
+  r.gStyle.SetOptStat(0)
+  r.gStyle.SetTitleAlign(33)
+  r.gStyle.SetGridStyle(0)
+  pi = 3.14159265358979
+  nbins=100
+  rf = r.TFile(get_filestring(dirstring))
+  t = rf.Get(get_objectpath(dirstring,treename))
+  h = r.TH1D('hphi','pho phi',nbins,-pi,pi)
+  t.Draw('phoPhi>>hphi','phoEt>50&&phoE<5000&&fabs(phoEta)>1.65&&fabs(phoEta)<1.8','goff')
+  rad = []
+  phi = []
+  delta = 2*pi/nbins
+  ran = np.arange(-pi+delta/2,pi,delta)
+  for i in ran:
+    phi.append(i)
+    rad.append(h.GetBinContent(h.GetXaxis().FindBin(i)))
+  pol = r.TGraphPolar(len(rad),np.asarray(phi),np.asarray(rad))
+  can = r.TCanvas('can_pho_polar_phi','Photon Phi Polar Plot',600,600)
+  can.SetGrid(-1,-1)
+  pol.SetTitle('Photon\ \phi\ \ ')
+  pol.SetLineColor(2)
+  pol.SetLineWidth(2)
+  pol.GetXaxis().SetLabelSize(0.01)
+  pol.Draw('L')
+  can.Update()
+  can.SaveAs('polarPhi_'+get_barename(get_filestring(dirstring))+'.png')
+  raw_input('wait')
+
 def process_ttree(dirstring,treename):
   print "TTree: "+treename
   chosen = {}
@@ -752,6 +781,7 @@ def process_ttree(dirstring,treename):
   print "phiahe: plot phi with various AHETotal cuts"
   print "2d: make 2d histograms between all chosen features"
   print "xy: make x,y 2d histograms of esrh and herh with photons and electrons"
+  print "pol: make polar phi plot of ph photons"
   action = raw_input("Please choose an action: ")
   if action == '1':
     plot_treebranch(dirstring,treename)
@@ -773,6 +803,8 @@ def process_ttree(dirstring,treename):
     plot_2d_auto(dirstring,treename)
   elif action == 'xy':
     xy(dirstring,treename)
+  elif action == 'pol':
+    polar_phoPhi(dirstring,treename)
   return chosen
 
 def process_TH1(dirstring,th1name):
